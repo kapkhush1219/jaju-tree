@@ -65,46 +65,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .sidebar-header h2 {
             margin: 0;
             color: var(--primary-color);
             font-size: 1.3em;
-        }
-
-        .sync-btn {
-            display: block;
-            width: 100%;
-            background: var(--calendar-color);
-            color: white;
-            text-align: center;
-            padding: 12px 0;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1em;
-            text-decoration: none;
-            margin-bottom: 20px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
-        }
-
-        .sync-btn:hover {
-            background: #4f46e5;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
-        }
-
-        .dashboard-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
         }
 
         .month-dropdown {
@@ -123,6 +90,35 @@
 
         .month-dropdown:focus {
             border-color: var(--secondary-color);
+        }
+
+        .sync-wrapper {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sync-btn {
+            display: block;
+            width: 100%;
+            background: var(--calendar-color);
+            color: white;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .sync-btn:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
         }
         
         .sidebar h3 {
@@ -159,7 +155,7 @@
             color: var(--text-main);
             font-size: 1.05em;
         }
-        
+
         .event-date {
             font-size: 0.85em;
             color: var(--text-muted);
@@ -1887,10 +1883,6 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>Dashboard</h2>
-            <button id="sync-btn" class="sync-btn">🗓️ Sync All Events to Phone</button>
-        </div>
-        
-        <div class="dashboard-controls">
             <select id="month-selector" class="month-dropdown">
                 <option value="Jan">January</option>
                 <option value="Feb">February</option>
@@ -1905,6 +1897,10 @@
                 <option value="Nov">November</option>
                 <option value="Dec">December</option>
             </select>
+        </div>
+        
+        <div class="sync-wrapper">
+            <button id="sync-btn" class="sync-btn">🗓️ Sync All Events to Phone</button>
         </div>
 
         <h3 id="current-month-title">Celebrations</h3>
@@ -1967,8 +1963,6 @@
                     if (text.includes(':')) {
                         personName = text.split(':')[0].replace(/🎂|🌸|💍/g, '').trim();
                         eventDate = text.split(':')[1].trim();
-                        
-                        // If it's an anniversary, grab the couple's names from the parent container
                         if(personName === "Anniv") {
                             const nameContainer = badge.closest('.name-container');
                             personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Couple";
