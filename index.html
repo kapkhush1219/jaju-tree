@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jaju Family Tree</title>
+    <title>Jaju Family Tree & Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,6 +15,7 @@
             --text-main: #334155;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
+            --wa-color: #25D366;
         }
 
         body {
@@ -27,16 +28,141 @@
             min-height: 100vh;
         }
 
-        .tree-container {
-            max-width: 1050px;
+        /* NEW DASHBOARD LAYOUT */
+        .main-wrapper {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
             margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        .tree-container {
+            flex: 1;
             background: var(--card-bg);
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,255,255,0.5);
+            overflow-x: auto;
         }
 
+        .sidebar {
+            width: 340px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+            position: sticky;
+            top: 40px;
+            flex-shrink: 0;
+        }
+
+        /* SIDEBAR STYLING */
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+        }
+
+        .month-dropdown {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: #f8fafc;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .month-dropdown:focus {
+            border-color: var(--secondary-color);
+        }
+        
+        .sidebar h3 {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .remembrance-header {
+            margin-top: 30px !important;
+            color: #64748b !important;
+        }
+
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-details strong {
+            display: block;
+            color: var(--text-main);
+            font-size: 1.05em;
+        }
+
+        .event-date {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .wa-btn {
+            background: var(--wa-color);
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-align: center;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+
+        .wa-btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+        
+        .no-events {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+        }
+
+        /* TREE STYLING */
         h1 {
             text-align: center;
             color: var(--primary-color);
@@ -68,10 +194,7 @@
             padding-left: 24px;
         }
 
-        li {
-            margin: 12px 0;
-            position: relative;
-        }
+        li { margin: 12px 0; position: relative; }
 
         ul ul li::before {
             content: '';
@@ -84,9 +207,7 @@
             border-radius: 2px;
         }
 
-        details {
-            margin: 4px 0;
-        }
+        details { margin: 4px 0; }
 
         summary {
             cursor: pointer;
@@ -127,10 +248,6 @@
             box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2) !important;
         }
         
-        .root-summary:hover {
-            background-color: #1e293b !important;
-        }
-
         .leaf-node {
             padding: 8px 20px 8px 12px;
             background-color: #fffbeb;
@@ -146,12 +263,8 @@
             transition: transform 0.2s ease;
             font-size: 1.1em;
         }
-        
-        .leaf-node:hover {
-            transform: translateY(-1px);
-        }
 
-        /* Avatar styling for couples */
+        /* Avatar styling */
         .avatar-group {
             display: inline-flex;
             align-items: center;
@@ -159,8 +272,8 @@
         }
         
         .avatar {
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid #ffffff;
@@ -180,19 +293,12 @@
             color: #94a3b8;
         }
         
-        .avatar:nth-child(2) {
-            margin-left: -30px;
-            z-index: 1;
-        }
-        
-        .avatar:nth-child(1) {
-            z-index: 2;
-        }
+        .avatar:nth-child(2) { margin-left: -15px; z-index: 1; }
+        .avatar:nth-child(1) { z-index: 2; }
 
-        /* Avatar styling for individuals */
         .leaf-avatar {
-            width: 75px;
-            height: 75px;
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #ffffff;
@@ -213,7 +319,6 @@
             color: #94a3b8;
         }
 
-        /* Date & Anniversary Meta Info Styling */
         .name-container {
             display: flex;
             flex-direction: column;
@@ -252,744 +357,779 @@
             color: #b45309;
         }
 
+        /* Mobile adjustments */
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                flex-direction: column-reverse;
+            }
+            .sidebar {
+                width: 100%;
+                box-sizing: border-box;
+                position: static;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="tree-container">
-    <h1>The Jaju Family Tree</h1>
-    <div class="subtitle">Interactive Descendant Chart • Click any branch to explore</div>
+<div class="main-wrapper">
     
-    <ul>
-        <li>
-            <details open>
-                <summary class="root-summary">
-                    <div class="avatar-group">
-                        <img src="mangniram.jpeg" class="avatar" alt="Mangniram">
-                        <img src="kesar_bai.jpeg" class="avatar" alt="Kesar Bai">
-                    </div>
-                    <div class="name-container">
-                        <div>Root: Mangniram & Kesar Bai</div>
-                        <div class="meta-info">
-                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                            <span class="date-badge">🎂 Mangniram: [DOB]</span>
-                            <span class="date-badge">🎂 Kesar Bai: [DOB]</span>
+    <!-- LEFT SIDE: THE FAMILY TREE -->
+    <div class="tree-container">
+        <h1>The Jaju Family Tree</h1>
+        <div class="subtitle">Interactive Descendant Chart • Click any branch to explore</div>
+        
+        <ul>
+            <li>
+                <details open>
+                    <summary class="root-summary">
+                        <div class="avatar-group">
+                            <img src="kesar_bai.jpeg" class="avatar" alt="Kesar Bai">
+                            <img src="mangniram.jpeg" class="avatar" alt="Mangniram">
                         </div>
-                    </div>
-                </summary>
-                <ul>
-                    <li>
-                        <details open>
-                            <summary>
-                                <div class="avatar-group">
-                                    <img src="badrinarayan.jpeg" class="avatar" alt="Badrinarayan">
-                                    <img src="geeta_devi.jpeg" class="avatar" alt="Geeta Devi">
-                                </div>
-                                <div class="name-container">
-                                    <div>Badrinarayan Jaju & Geeta Devi Jaju</div>
-                                    <div class="meta-info">
-                                        <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                        <span class="date-badge">🎂 Badrinarayan: [DOB]</span>
-                                        <span class="date-badge">🎂 Geeta Devi: [DOB]</span>
+                        <div class="name-container">
+                            <div>Root: Kesar Bai & Mangniram Jaju</div>
+                            <div class="meta-info">
+                                <span class="date-badge">🌸 Kesar Bai: [DOD]</span>
+                                <span class="date-badge">🌸 Mangniram: [DOD]</span>
+                            </div>
+                        </div>
+                    </summary>
+                    <ul>
+                        <li>
+                            <details open>
+                                <summary>
+                                    <div class="avatar-group">
+                                        <img src="geeta_devi.jpeg" class="avatar" alt="Geeta Devi">
+                                        <img src="badrinarayan.jpeg" class="avatar" alt="Badrinarayan">
                                     </div>
-                                </div>
-                            </summary>
-                            <ul>
-                                <!-- Branch 1 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="ramnarayan.jpeg" class="avatar" alt="Ramnarayan">
-                                                <img src="leela_jaju.jpeg" class="avatar" alt="Leela Jaju">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Ramnarayan & Leela Jaju</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Ramnarayan: [DOB]</span>
-                                                    <span class="date-badge">🎂 Leela: [DOB]</span>
+                                    <div class="name-container">
+                                        <div>Geeta Devi & Badrinarayan Jaju</div>
+                                        <div class="meta-info">
+                                            <span class="date-badge">🌸 Geeta Devi: [DOD]</span>
+                                            <span class="date-badge">🌸 Badrinarayan: [DOD]</span>
+                                        </div>
+                                    </div>
+                                </summary>
+                                <ul>
+                                    <!-- Branch 1 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="leela_jaju.jpeg" class="avatar" alt="Leela">
+                                                    <img src="ramnarayan.jpeg" class="avatar" alt="Ramnarayan">
                                                 </div>
-                                            </div>
-                                        </summary>
-                                        <ul>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="rita.jpeg" class="avatar" alt="Rita">
-                                                            <img src="shamsundar.jpeg" class="avatar" alt="Shamsundar">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Rita & Shamsundar Dalya</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Rita: [DOB]</span>
-                                                                <span class="date-badge">🎂 Shamsundar: [DOB]</span>
+                                                <div class="name-container">
+                                                    <div>Leela & Ramnarayan Jaju</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                        <span class="date-badge">🌸 Leela: [DOD]</span>
+                                                        <span class="date-badge">🌸 Ramnarayan: [DOD]</span>
+                                                    </div>
+                                                </div>
+                                            </summary>
+                                            <ul>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="rita.jpeg" class="avatar" alt="Rita">
+                                                                <img src="shamsundar.jpeg" class="avatar" alt="Shamsundar">
                                                             </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="vinod.jpeg" class="avatar" alt="Vinod">
-                                                                        <img src="manju_vinod.jpeg" class="avatar" alt="Manju">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Vinod & Manju</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Vinod: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Manju: [DOB]</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="kushal.jpeg" class="leaf-avatar" alt="Kushal"><div class="name-container"><div>Kushal</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                    <li><span class="leaf-node"><img src="lakshita.jpeg" class="leaf-avatar" alt="Lakshita"><div class="name-container"><div>Lakshita</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="harinarayan.jpeg" class="avatar" alt="Harinarayan">
-                                                            <img src="sangita_hari.jpeg" class="avatar" alt="Sangeeta">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Harinarayan & Sangeeta Jaju</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Harinarayan: [DOB]</span>
-                                                                <span class="date-badge">🎂 Sangeeta: [DOB]</span>
+                                                            <div class="name-container">
+                                                                <div>Rita & Shamsundar Dalya</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🌸 Rita: [DOD]</span>
+                                                                    <span class="date-badge">🌸 Shamsundar: [DOD]</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="shravan.jpeg" class="avatar" alt="Shravan">
-                                                                        <img src="aakanksha.jpeg" class="avatar" alt="Aakanksha">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Shravan & Aakanksha</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Shravan: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Aakanksha: [DOB]</span>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="manju_vinod.jpeg" class="avatar" alt="Manju">
+                                                                            <img src="vinod.jpeg" class="avatar" alt="Vinod">
                                                                         </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="advika.jpeg" class="leaf-avatar" alt="Advika"><div class="name-container"><div>Advika</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="preeti.jpeg" class="avatar" alt="Preeti">
-                                                                        <img src="pratik_preeti.jpeg" class="avatar" alt="Pratik">
-                                                                    </div>
+                                                                        <div class="name-container">
+                                                                            <div>Manju & Vinod Dalya</div>
+                                                                            <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Manju: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Vinod: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="kushal.jpeg" class="leaf-avatar" alt="Kushal"><div class="name-container"><div>Kushal</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                        <li><span class="leaf-node"><img src="lakshita.jpeg" class="leaf-avatar" alt="Lakshita"><div class="name-container"><div>Lakshita</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="sangita_hari.jpeg" class="avatar" alt="Sangeeta">
+                                                                <img src="harinarayan.jpeg" class="avatar" alt="Harinarayan">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Sangeeta & Harinarayan Jaju</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Sangeeta: [DOB]</span>
+                                                                    <span class="date-badge">🌸 Harinarayan: [DOD]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="aakanksha.jpeg" class="avatar" alt="Aakanksha">
+                                                                            <img src="shravan.jpeg" class="avatar" alt="Shravan">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Aakanksha & Shravan Jaju</div>
+                                                                        <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Aakanksha: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Shravan: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="advika.jpeg" class="leaf-avatar" alt="Advika"><div class="name-container"><div>Advika</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="preeti.jpeg" class="avatar" alt="Preeti">
+                                                                            <img src="pratik_preeti.jpeg" class="avatar" alt="Pratik">
+                                                                        </div>
                                                                     <div class="name-container">
                                                                         <div>Preeti & Pratik</div>
                                                                         <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Preeti: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Pratik: [DOB]</span>
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Preeti: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Pratik: [DOB]</span>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="yug.jpeg" class="leaf-avatar" alt="Yug"><div class="name-container"><div>Yug</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                    <li><span class="leaf-node"><img src="avira_preeti.jpeg" class="leaf-avatar" alt="Avira"><div class="name-container"><div>Avira</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="sunita.jpeg" class="avatar" alt="Sunita">
-                                                            <img src="nandkishor_p.jpeg" class="avatar" alt="Nandkishor">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Sunita & Nandkishor Pungliya</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Sunita: [DOB]</span>
-                                                                <span class="date-badge">🎂 Nandkishor: [DOB]</span>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="yug.jpeg" class="leaf-avatar" alt="Yug"><div class="name-container"><div>Yug</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                        <li><span class="leaf-node"><img src="avira_preeti.jpeg" class="leaf-avatar" alt="Avira"><div class="name-container"><div>Avira</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="sunita.jpeg" class="avatar" alt="Sunita">
+                                                                <img src="nandkishor_p.jpeg" class="avatar" alt="Nandkishor">
                                                             </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="mrunal.jpeg" class="avatar" alt="Mrunal">
-                                                                        <img src="nitesh.jpeg" class="avatar" alt="Nitesh">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Mrunal & Nitesh Mandhane</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Mrunal: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Nitesh: [DOB]</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="aadya.jpeg" class="leaf-avatar" alt="Aadya"><div class="name-container"><div>Aadya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="megha_nahar.jpeg" class="avatar" alt="Megha">
-                                                                        <img src="rahul.jpeg" class="avatar" alt="Rahul">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Megha & Rahul Nahar</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Megha: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Rahul: [DOB]</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="aatman.jpeg" class="leaf-avatar" alt="Aatman"><div class="name-container"><div>Aatman</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="dhara.jpeg" class="avatar" alt="Dhara">
-                                                                        <img src="atul_malpani.jpeg" class="avatar" alt="Atul">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Dhara & Atul Malpani</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Dhara: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Atul: [DOB]</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="dhairya.jpeg" class="leaf-avatar" alt="Dhairya"><div class="name-container"><div>Dhairya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <span class="leaf-node">
-                                                    <img src="jugalkishore.jpeg" class="leaf-avatar" alt="Jugalkishore">
-                                                    <div class="name-container">
-                                                        <div>Jugalkishor Jaju</div>
-                                                        <div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div>
-                                                    </div>
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="sangeeta_boob.jpeg" class="avatar" alt="Sangeeta">
-                                                            <img src="ramdhan.jpeg" class="avatar" alt="Ramdhan">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Sangeeta & Ramdhan Boob</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Sangeeta: [DOB]</span>
-                                                                <span class="date-badge">🎂 Ramdhan: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="sachin.jpeg" class="avatar" alt="Sachin">
-                                                                        <img src="devashree.jpeg" class="avatar" alt="Devashree">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Sachin & Devashree</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Sachin: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Devashree: [DOB]</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="agastya.jpeg" class="leaf-avatar" alt="Agastya"><div class="name-container"><div>Agastya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                    <li><span class="leaf-node"><img src="sattviki.jpeg" class="leaf-avatar" alt="Sattviki"><div class="name-container"><div>Sattviki</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                        <li><span class="leaf-node"><img src="surabhi.jpeg" class="leaf-avatar" alt="Surabhi"><div class="name-container"><div>Surabhi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                <!-- Branch 2 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="lunkaran.jpeg" class="avatar" alt="Lunkaran">
-                                                <img src="sonali.jpeg" class="avatar" alt="Sonali">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Lunkaran & Sonali Jaju</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Lunkaran: [DOB]</span>
-                                                    <span class="date-badge">🎂 Sonali: [DOB]</span>
-                                                </div>
-                                            </div>
-                                        </summary>
-                                        <ul>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="anand.jpeg" class="avatar" alt="Anand">
-                                                            <img src="sweta.jpeg" class="avatar" alt="Sweta">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Anand & Sweta Jaju</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Anand: [DOB]</span>
-                                                                <span class="date-badge">🎂 Sweta: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="aarush.jpeg" class="leaf-avatar" alt="Aarush"><div class="name-container"><div>Aarush</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="amruta.jpeg" class="avatar" alt="Amruta">
-                                                            <img src="atul_rathod.jpeg" class="avatar" alt="Atul">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Amruta & Atul Rathod</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Amruta: [DOB]</span>
-                                                                <span class="date-badge">🎂 Atul: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="akshara.jpeg" class="leaf-avatar" alt="Akshara"><div class="name-container"><div>Akshara</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                        <li><span class="leaf-node"><img src="anushka.jpeg" class="leaf-avatar" alt="Anushka"><div class="name-container"><div>Anushka</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="aarti.jpeg" class="avatar" alt="Aarti">
-                                                            <img src="narendra.jpeg" class="avatar" alt="Narendra">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Aarti & Narendra Jadhav</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Aarti: [DOB]</span>
-                                                                <span class="date-badge">🎂 Narendra: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="atharva.jpeg" class="leaf-avatar" alt="Atharva"><div class="name-container"><div>Atharva</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                <!-- Branch 3 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="kaluram_traditional_portrait.jpeg" class="avatar" alt="Kaluram">
-                                                <img src="sushila.jpeg" class="avatar" alt="Sushila">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Kaluram & Sushila Jaju</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Kaluram: [DOB]</span>
-                                                    <span class="date-badge">🎂 Sushila: [DOB]</span>
-                                                </div>
-                                            </div>
-                                        </summary>
-                                        <ul>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="kavita.jpeg" class="avatar" alt="Kavita">
-                                                            <img src="aashish.jpeg" class="avatar" alt="Aashish">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Kavita & Aashish Dhoot</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Kavita: [DOB]</span>
-                                                                <span class="date-badge">🎂 Aashish: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="parth.jpeg" class="leaf-avatar" alt="Parth"><div class="name-container"><div>Parth</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                        <li><span class="leaf-node"><img src="kavya.jpeg" class="leaf-avatar" alt="Kavya"><div class="name-container"><div>Kavya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="kapil.jpeg" class="avatar" alt="Kapil">
-                                                            <img src="bharti.jpeg" class="avatar" alt="Bharti">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Kapil & Bharti Jaju</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Kapil: [DOB]</span>
-                                                                <span class="date-badge">🎂 Bharti: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li>
-                                                            <span class="leaf-node">
-                                                                <img src="likhit.jpeg" class="leaf-avatar" alt="Likhit">
-                                                                <div class="name-container">
-                                                                    <div>Likhit</div>
-                                                                    <div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div>
+                                                            <div class="name-container">
+                                                                <div>Sunita & Nandkishor Pungliya</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Sunita: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Nandkishor: [DOB]</span>
                                                                 </div>
-                                                            </span>
-                                                        </li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li><span class="leaf-node"><img src="karuna.jpeg" class="leaf-avatar" alt="Karuna"><div class="name-container"><div>Karuna Jaju</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="kasturi.jpeg" class="avatar" alt="Kasturi">
-                                                            <img src="parag.jpeg" class="avatar" alt="Parag">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Kasturi & Parag Mantri</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Kasturi: [DOB]</span>
-                                                                <span class="date-badge">🎂 Parag: [DOB]</span>
                                                             </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="mrunal.jpeg" class="avatar" alt="Mrunal">
+                                                                            <img src="nitesh.jpeg" class="avatar" alt="Nitesh">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Mrunal & Nitesh Mandhane</div>
+                                                                        <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Mrunal: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Nitesh: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="aadya.jpeg" class="leaf-avatar" alt="Aadya"><div class="name-container"><div>Aadya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="megha_nahar.jpeg" class="avatar" alt="Megha">
+                                                                            <img src="rahul.jpeg" class="avatar" alt="Rahul">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Megha & Rahul Nahar</div>
+                                                                            <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Megha: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Rahul: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="aatman.jpeg" class="leaf-avatar" alt="Aatman"><div class="name-container"><div>Aatman</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="dhara.jpeg" class="avatar" alt="Dhara">
+                                                                            <img src="atul_malpani.jpeg" class="avatar" alt="Atul">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Dhara & Atul Malpani</div>
+                                                                            <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Dhara: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Atul: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="dhairya.jpeg" class="leaf-avatar" alt="Dhairya"><div class="name-container"><div>Dhairya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <span class="leaf-node">
+                                                        <img src="jugalkishore.jpeg" class="leaf-avatar" alt="Jugalkishore">
+                                                        <div class="name-container">
+                                                            <div>Jugalkishor Jaju</div>
+                                                            <div class="meta-info"><span class="date-badge">🌸 [DOD]</span></div>
                                                         </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="bhowmik.jpeg" class="leaf-avatar" alt="Bhowmik"><div class="name-container"><div>Bhowmik</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                        <li><span class="leaf-node"><img src="devanshi.jpeg" class="leaf-avatar" alt="Devanshi"><div class="name-container"><div>Devanshi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="sangeeta_boob.jpeg" class="avatar" alt="Sangeeta">
+                                                                <img src="ramdhan.jpeg" class="avatar" alt="Ramdhan">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Sangeeta & Ramdhan Boob</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Sangeeta: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Ramdhan: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="devashree.jpeg" class="avatar" alt="Devashree">
+                                                                            <img src="sachin.jpeg" class="avatar" alt="Sachin">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Devashree & Sachin Boob</div>
+                                                                            <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Devashree: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Sachin: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="agastya.jpeg" class="leaf-avatar" alt="Agastya"><div class="name-container"><div>Agastya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                        <li><span class="leaf-node"><img src="sattviki.jpeg" class="leaf-avatar" alt="Sattviki"><div class="name-container"><div>Sattviki</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                            <li><span class="leaf-node"><img src="surabhi.jpeg" class="leaf-avatar" alt="Surabhi"><div class="name-container"><div>Surabhi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </li>
 
-                                <!-- Branch 4 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="madanlal.jpeg" class="avatar" alt="Madanlal">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Madanlal Jaju</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">🎂 [DOB]</span>
+                                    <!-- Branch 2 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="sonali.jpeg" class="avatar" alt="Sonali">
+                                                    <img src="lunkaran.jpeg" class="avatar" alt="Lunkaran">
                                                 </div>
-                                            </div>
-                                        </summary>
-                                    </details>
-                                </li>
-
-                                <!-- Branch 5 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="ramkishore.jpeg" class="avatar" alt="Ramkishore">
-                                                <img src="urmila.jpeg" class="avatar" alt="Urmila">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Ramkishore & Urmila Jaju</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Ramkishore: [DOB]</span>
-                                                    <span class="date-badge">🎂 Urmila: [DOB]</span>
-                                                </div>
-                                            </div>
-                                        </summary>
-                                        <ul>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="pavan.jpeg" class="avatar" alt="Pavan">
-                                                            <img src="raksha.jpeg" class="avatar" alt="Raksha">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Pavan & Raksha Jaju</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Pavan: [DOB]</span>
-                                                                <span class="date-badge">🎂 Raksha: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="viresha.jpeg" class="leaf-avatar" alt="Viresha"><div class="name-container"><div>Viresha</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="pournima.jpeg" class="avatar" alt="Pournima">
-                                                            <img src="abhishek.jpeg" class="avatar" alt="Abhishek">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Pournima & Abhishek Nagarkar</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Pournima: [DOB]</span>
-                                                                <span class="date-badge">🎂 Abhishek: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="arnav.jpeg" class="leaf-avatar" alt="Arnav"><div class="name-container"><div>Arnav</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                <!-- Branch 6 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="kamalkishore.jpeg" class="avatar" alt="Kamalkishore">
-                                                <img src="manju_jaju.jpeg" class="avatar" alt="Manju">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Kamalkishore & Manju Jaju</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Kamalkishore: [DOB]</span>
-                                                    <span class="date-badge">🎂 Manju: [DOB]</span>
-                                                </div>
-                                            </div>
-                                        </summary>
-                                        <ul>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="divyani.jpeg" class="avatar" alt="Divyani">
-                                                            <img src="kamal.jpeg" class="avatar" alt="Kamal">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Divyani & Kamal Gandhi</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Divyani: [DOB]</span>
-                                                                <span class="date-badge">🎂 Kamal: [DOB]</span>
-                                                            </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="himani.jpeg" class="leaf-avatar" alt="Himani"><div class="name-container"><div>Himani</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                        <li><span class="leaf-node"><img src="sanvi.jpeg" class="leaf-avatar" alt="Sanvi"><div class="name-container"><div>Sanvi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <span class="leaf-node">
-                                                    <img src="gaurav.jpeg" class="leaf-avatar" alt="Gaurav">
-                                                    <div class="name-container">
-                                                        <div>Gaurav & Megha Jaju</div>
-                                                        <div class="meta-info">
-                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                            <span class="date-badge">🎂 Gaurav: [DOB]</span>
-                                                            <span class="date-badge">🎂 Megha: [DOB]</span>
-                                                        </div>
+                                                <div class="name-container">
+                                                    <div>Sonali & Lunkaran Jaju</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                        <span class="date-badge">🌸 Sonali: [DOD]</span>
+                                                        <span class="date-badge">🎂 Lunkaran: [DOB]</span>
                                                     </div>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </details>
-                                </li>
-
-                                <!-- Branch 7 -->
-                                <li>
-                                    <details>
-                                        <summary>
-                                            <div class="avatar-group">
-                                                <img src="harkudevi.jpeg" class="avatar" alt="Harkudevi">
-                                                <img src="mohanlal_harkut.jpeg" class="avatar" alt="Mohanlal Harkut">
-                                            </div>
-                                            <div class="name-container">
-                                                <div>Harkudevi & Mohanlal Harkut</div>
-                                                <div class="meta-info">
-                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Harkudevi: [DOB]</span>
-                                                    <span class="date-badge">🎂 Mohanlal: [DOB]</span>
                                                 </div>
-                                            </div>
-                                        </summary>
-                                        <ul>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="laduram.jpeg" class="avatar" alt="Laduram">
-                                                            <img src="pushpa.jpeg" class="avatar" alt="Pushpa">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Laduram & Pushpa Harkut</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Laduram: [DOB]</span>
-                                                                <span class="date-badge">🎂 Pushpa: [DOB]</span>
+                                            </summary>
+                                            <ul>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="sweta.jpeg" class="avatar" alt="Sweta">
+                                                                <img src="anand.jpeg" class="avatar" alt="Anand">
                                                             </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li><span class="leaf-node"><img src="punit.jpeg" class="leaf-avatar" alt="Punit"><div class="name-container"><div>Punit & Deeksha</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Punit: [DOB]</span><span class="date-badge">🎂 Deeksha: [DOB]</span></div></div></span></li>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="pooja.jpeg" class="avatar" alt="Pooja">
-                                                                        <img src="ajay.jpeg" class="avatar" alt="Ajay">
-                                                                    </div>
-                                                                    <div class="name-container">
-                                                                        <div>Pooja & Ajay Charkha</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Pooja: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Ajay: [DOB]</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="yashvi.jpeg" class="leaf-avatar" alt="Yashvi"><div class="name-container"><div>Yashvi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                    <li><span class="leaf-node"><img src="charu.jpeg" class="leaf-avatar" alt="Charu"><div class="name-container"><div>Charu</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                    </ul>
-                                                </details>
-                                            </li>
-                                            <li>
-                                                <details>
-                                                    <summary>
-                                                        <div class="avatar-group">
-                                                            <img src="nandkishor_h.jpeg" class="avatar" alt="Nandkishor">
-                                                            <img src="pavitra.jpeg" class="avatar" alt="Pavitra">
-                                                        </div>
-                                                        <div class="name-container">
-                                                            <div>Nandkishor & Pavitra Harkut</div>
-                                                            <div class="meta-info">
-                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Nandkishor: [DOB]</span>
-                                                                <span class="date-badge">🎂 Pavitra: [DOB]</span>
+                                                            <div class="name-container">
+                                                                <div>Sweta & Anand Jaju</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span> 
+                                                                    <span class="date-badge">🎂 Sweta: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Anand: [DOB]</span> 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </summary>
-                                                    <ul>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="harshal.jpeg" class="avatar" alt="Harshal">
-                                                                        <img src="aruna.jpeg" class="avatar" alt="Aruna">
-                                                                    </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="aarush.jpeg" class="leaf-avatar" alt="Aarush"><div class="name-container"><div>Aarush</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="amruta.jpeg" class="avatar" alt="Amruta">
+                                                                <img src="atul_rathod.jpeg" class="avatar" alt="Atul">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Amruta & Atul Rathod</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Amruta: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Atul: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="akshara.jpeg" class="leaf-avatar" alt="Akshara"><div class="name-container"><div>Akshara</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                            <li><span class="leaf-node"><img src="anushka.jpeg" class="leaf-avatar" alt="Anushka"><div class="name-container"><div>Anushka</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="aarti.jpeg" class="avatar" alt="Aarti">
+                                                                <img src="narendra.jpeg" class="avatar" alt="Narendra">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Aarti & Narendra Jadhav</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Aarti: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Narendra: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="atharva.jpeg" class="leaf-avatar" alt="Atharva"><div class="name-container"><div>Atharva</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </li>
+
+                                    <!-- Branch 3 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="sushila.jpeg" class="avatar" alt="Sushila">
+                                                    <img src="kaluram_traditional_portrait.jpeg" class="avatar" alt="Kaluram">
+                                                </div>
+                                                <div class="name-container">
+                                                    <div>Sushila & Kaluram Jaju</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">💍 Anniv: 17 Apr</span>
+                                                        <span class="date-badge">🎂 Sushila: 10 Dec</span>
+                                                        <span class="date-badge">🌸 Kaluram: 31 Jul</span> 
+                                                    </div>
+                                                </div>
+                                            </summary>
+                                            <ul>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="kavita.jpeg" class="avatar" alt="Kavita">
+                                                                <img src="aashish.jpeg" class="avatar" alt="Aashish">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Kavita & Aashish Dhoot</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: 10 Jul</span>
+                                                                    <span class="date-badge">🎂 Kavita: 08 May</span>
+                                                                    <span class="date-badge">🎂 Aashish: 06 Oct</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="parth.jpeg" class="leaf-avatar" alt="Parth"><div class="name-container"><div>Parth</div><div class="meta-info"><span class="date-badge">🎂 23 Sep</span></div></div></span></li>
+                                                            <li><span class="leaf-node"><img src="kavya.jpeg" class="leaf-avatar" alt="Kavya"><div class="name-container"><div>Kavya</div><div class="meta-info"><span class="date-badge">🎂 03 Jun</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="bharti.jpeg" class="avatar" alt="Bharti">
+                                                                <img src="kapil.jpeg" class="avatar" alt="Kapil">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Bharti & Kapil Jaju</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: 08 Dec</span>
+                                                                    <span class="date-badge">🎂 Bharti: 13 Feb</span>
+                                                                    <span class="date-badge">🎂 Kapil: 12 May</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <span class="leaf-node">
+                                                                    <img src="likhit.jpeg" class="leaf-avatar" alt="Likhit">
                                                                     <div class="name-container">
-                                                                        <div>Harshal & Aruna</div>
-                                                                        <div class="meta-info">
-                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Harshal: [DOB]</span>
-                                                                            <span class="date-badge">🎂 Aruna: [DOB]</span>
+                                                                        <div>Likhit</div>
+                                                                        <div class="meta-info"><span class="date-badge">🎂 19 Dec</span></div>
+                                                                    </div>
+                                                                </span>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li><span class="leaf-node"><img src="karuna.jpeg" class="leaf-avatar" alt="Karuna"><div class="name-container"><div>Karuna Jaju</div><div class="meta-info"><span class="date-badge">🎂 10 Sep</span></div></div></span></li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="kasturi.jpeg" class="avatar" alt="Kasturi">
+                                                                <img src="parag.jpeg" class="avatar" alt="Parag">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Kasturi & Parag Mantri</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: 11 Nov</span>
+                                                                    <span class="date-badge">🎂 Kasturi: 24 Mar</span>
+                                                                    <span class="date-badge">🎂 Parag: 10 Aug</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="bhowmik.jpeg" class="leaf-avatar" alt="Bhowmik"><div class="name-container"><div>Bhowmik</div><div class="meta-info"><span class="date-badge">🎂 08 Feb</span></div></div></span></li>
+                                                            <li><span class="leaf-node"><img src="devanshi.jpeg" class="leaf-avatar" alt="Devanshi"><div class="name-container"><div>Devanshi</div><div class="meta-info"><span class="date-badge">🎂 05 Jul</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </li>
+
+                                    <!-- Branch 4 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="madanlal.jpeg" class="avatar" alt="Madanlal">
+                                                </div>
+                                                <div class="name-container">
+                                                    <div>Madanlal Jaju</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">🌸 24 Mar</span>
+                                                    </div>
+                                                </div>
+                                            </summary>
+                                        </details>
+                                    </li>
+
+                                    <!-- Branch 5 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="urmila.jpeg" class="avatar" alt="Urmila">
+                                                    <img src="ramkishore.jpeg" class="avatar" alt="Ramkishore">
+                                                </div>
+                                                <div class="name-container">
+                                                    <div>Urmila & Ramkishore Jaju</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">💍 Anniv: 02 Jul</span>
+                                                        <span class="date-badge">🌸 Urmila: 28 Feb</span>
+                                                        <span class="date-badge">🎂 Ramkishore: 03 May</span>
+                                                    </div>
+                                                </div>
+                                            </summary>
+                                            <ul>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="raksha.jpeg" class="avatar" alt="Raksha">
+                                                                <img src="pavan.jpeg" class="avatar" alt="Pavan">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Raksha & Pavan Jaju</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: 02 Jul</span>
+                                                                    <span class="date-badge">🎂 Raksha: 13 Sep</span>
+                                                                    <span class="date-badge">🎂 Pavan: 03 Feb</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="viresha.jpeg" class="leaf-avatar" alt="Viresha"><div class="name-container"><div>Viresha</div><div class="meta-info"><span class="date-badge">🎂 09 Apr</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="pournima.jpeg" class="avatar" alt="Pournima">
+                                                                <img src="abhishek.jpeg" class="avatar" alt="Abhishek">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Pournima & Abhishek Nagarkar</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: 07 Dec</span>
+                                                                    <span class="date-badge">🎂 Pournima: 04 Apr</span>
+                                                                    <span class="date-badge">🎂 Abhishek: 05 Jun</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="arnav.jpeg" class="leaf-avatar" alt="Arnav"><div class="name-container"><div>Arnav</div><div class="meta-info"><span class="date-badge">🎂 09 Oct</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </li>
+
+                                    <!-- Branch 6 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="manju_jaju.jpeg" class="avatar" alt="Manju">
+                                                    <img src="kamalkishore.jpeg" class="avatar" alt="Kamalkishore">
+                                                </div>
+                                                <div class="name-container">
+                                                    <div>Manju & Kamalkishore Jaju</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                        <span class="date-badge">🎂 Manju: [DOB]</span>
+                                                        <span class="date-badge">🎂 Kamalkishore: [DOB]</span>
+                                                    </div>
+                                                </div>
+                                            </summary>
+                                            <ul>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="divyani.jpeg" class="avatar" alt="Divyani">
+                                                                <img src="kamal.jpeg" class="avatar" alt="Kamal">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Divyani & Kamal Gandhi</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Divyani: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Kamal: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li><span class="leaf-node"><img src="himani.jpeg" class="leaf-avatar" alt="Himani"><div class="name-container"><div>Himani</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                            <li><span class="leaf-node"><img src="sanvi.jpeg" class="leaf-avatar" alt="Sanvi"><div class="name-container"><div>Sanvi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="megha_g.jpeg" class="avatar" alt="Megha">
+                                                                <img src="gaurav.jpeg" class="avatar" alt="Gaurav">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Megha & Gaurav Jaju</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Megha: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Gaurav: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                    </details>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </li>
+
+                                    <!-- Branch 7 -->
+                                    <li>
+                                        <details>
+                                            <summary>
+                                                <div class="avatar-group">
+                                                    <img src="harkudevi.jpeg" class="avatar" alt="Harkudevi">
+                                                    <img src="mohanlal_harkut.jpeg" class="avatar" alt="Mohanlal Harkut">
+                                                </div>
+                                                <div class="name-container">
+                                                    <div>Harkudevi & Mohanlal Harkut</div>
+                                                    <div class="meta-info">
+                                                        <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                        <span class="date-badge">🌸 Harkudevi: [DOD]</span>
+                                                        <span class="date-badge">🎂 Mohanlal: [DOB]</span>
+                                                    </div>
+                                                </div>
+                                            </summary>
+                                            <ul>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="pushpa.jpeg" class="avatar" alt="Pushpa">
+                                                                <img src="laduram.jpeg" class="avatar" alt="Laduram">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Pushpa & Laduram Harkut</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Pushpa: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Laduram: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="deeksha.jpeg" class="avatar" alt="Deeksha">
+                                                                            <img src="punit.jpeg" class="avatar" alt="Punit">
                                                                         </div>
-                                                                    </div>
-                                                                </summary>
-                                                                <ul>
-                                                                    <li><span class="leaf-node"><img src="lavya.jpeg" class="leaf-avatar" alt="Lavya"><div class="name-container"><div>Lavya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                    <li><span class="leaf-node"><img src="divit.jpeg" class="leaf-avatar" alt="Divit"><div class="name-container"><div>Divit</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
-                                                                </ul>
-                                                            </details>
-                                                        </li>
-                                                        <li>
-                                                            <details>
-                                                                <summary>
-                                                                    <div class="avatar-group">
-                                                                        <img src="lakshit_h.jpeg" class="avatar" alt="Lakshit">
-                                                                        <img src="shivani.jpeg" class="avatar" alt="Shivani">
+                                                                        <div class="name-container">
+                                                                            <div>Deeksha & Punit Harkut</div>
+                                                                            <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Deeksha: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Punit: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                </details>
+                                                            </li>
+                                                            <li><span class="leaf-node"><img src="lehari.jpeg" class="leaf-avatar" alt="Lehari"><div class="name-container"><div>Lehari</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="pooja.jpeg" class="avatar" alt="Pooja">
+                                                                            <img src="ajay.jpeg" class="avatar" alt="Ajay">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Pooja & Ajay Charkha</div>
+                                                                            <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Pooja: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Ajay: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="yashvi.jpeg" class="leaf-avatar" alt="Yashvi"><div class="name-container"><div>Yashvi</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                        <li><span class="leaf-node"><img src="charu.jpeg" class="leaf-avatar" alt="Charu"><div class="name-container"><div>Charu</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                        </ul>
+                                                    </details>
+                                                </li>
+                                                <li>
+                                                    <details>
+                                                        <summary>
+                                                            <div class="avatar-group">
+                                                                <img src="pavitra.jpeg" class="avatar" alt="Pavitra">
+                                                                <img src="nandkishor_h.jpeg" class="avatar" alt="Nandkishor">
+                                                            </div>
+                                                            <div class="name-container">
+                                                                <div>Pavitra & Nandkishor Harkut</div>
+                                                                <div class="meta-info">
+                                                                    <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                    <span class="date-badge">🎂 Pavitra: [DOB]</span>
+                                                                    <span class="date-badge">🎂 Nandkishor: [DOB]</span>
+                                                                </div>
+                                                            </div>
+                                                        </summary>
+                                                        <ul>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="aruna.jpeg" class="avatar" alt="Aruna">
+                                                                            <img src="harshal.jpeg" class="avatar" alt="Harshal">
+                                                                        </div>
+                                                                        <div class="name-container">
+                                                                            <div>Aruna & Harshal Harkut</div>
+                                                                        <div class="meta-info">
+                                                                                <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                                <span class="date-badge">🎂 Aruna: [DOB]</span>
+                                                                                <span class="date-badge">🎂 Harshal: [DOB]</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </summary>
+                                                                    <ul>
+                                                                        <li><span class="leaf-node"><img src="lavya.jpeg" class="leaf-avatar" alt="Lavya"><div class="name-container"><div>Lavya</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                        <li><span class="leaf-node"><img src="divit.jpeg" class="leaf-avatar" alt="Divit"><div class="name-container"><div>Divit</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                                    </ul>
+                                                                </details>
+                                                            </li>
+                                                            <li>
+                                                                <details>
+                                                                    <summary>
+                                                                        <div class="avatar-group">
+                                                                            <img src="shivani.jpeg" class="avatar" alt="Shivani">
+                                                                            <img src="lakshit_h.jpeg" class="avatar" alt="Lakshit">
                                                                     </div>
                                                                     <div class="name-container">
-                                                                        <div>Lakshit & Shivani</div>
+                                                                        <div>Shivani & Lakshit Harkut</div>
                                                                         <div class="meta-info">
                                                                             <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Lakshit: [DOB]</span>
                                                                             <span class="date-badge">🎂 Shivani: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Lakshit: [DOB]</span>
                                                                         </div>
                                                                     </div>
                                                                 </summary>
@@ -1005,20 +1145,37 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="amarchand.jpeg" class="avatar" alt="Amarchand">
                                                             <img src="ramkanya.jpeg" class="avatar" alt="Ramkanya">
+                                                            <img src="amarchand.jpeg" class="avatar" alt="Amarchand">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Amarchand & Ramkanya Harkut</div>
+                                                            <div>Ramkanya & Amarchand Harkut</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Amarchand: [DOB]</span>
                                                                 <span class="date-badge">🎂 Ramkanya: [DOB]</span>
+                                                                <span class="date-badge">🎂 Amarchand: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
                                                     <ul>
-                                                        <li><span class="leaf-node"><img src="sudarshan.jpeg" class="leaf-avatar" alt="Sudarshan"><div class="name-container"><div>Sudarshan & Prerna</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Sudarshan: [DOB]</span><span class="date-badge">🎂 Prerna: [DOB]</span></div></div></span></li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="prerna.jpeg" class="avatar" alt="Prerna">
+                                                                        <img src="sudarshan.jpeg" class="avatar" alt="Sudarshan">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Prerna & Sudarshan Harkut</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Prerna: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Sudarshan: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
                                                         <li><span class="leaf-node"><img src="darshit.jpeg" class="leaf-avatar" alt="Darshit"><div class="name-container"><div>Darshit</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
                                                     </ul>
                                                 </details>
@@ -1040,8 +1197,42 @@
                                                         </div>
                                                     </summary>
                                                     <ul>
-                                                        <li><span class="leaf-node"><img src="prafful.jpeg" class="leaf-avatar" alt="Prafful"><div class="name-container"><div>Prafful & Manisha Laddha</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Prafful: [DOB]</span><span class="date-badge">🎂 Manisha: [DOB]</span></div></div></span></li>
-                                                        <li><span class="leaf-node"><img src="pallavi.jpeg" class="leaf-avatar" alt="Pallavi"><div class="name-container"><div>Pallavi & Sanjeet Patwa</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Pallavi: [DOB]</span><span class="date-badge">🎂 Sanjeet: [DOB]</span></div></div></span></li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="manisha_l.jpeg" class="avatar" alt="Manisha">
+                                                                        <img src="prafful.jpeg" class="avatar" alt="Prafful">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Manisha & Prafful Laddha</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Manisha: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Prafful: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="pallavi.jpeg" class="avatar" alt="Pallavi">
+                                                                        <img src="sanjeet.jpeg" class="avatar" alt="Sanjeet">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Pallavi & Sanjeet Patwa</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Pallavi: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Sanjeet: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
                                                     </ul>
                                                 </details>
                                             </li>
@@ -1062,8 +1253,42 @@
                                                         </div>
                                                     </summary>
                                                     <ul>
-                                                        <li><span class="leaf-node"><img src="megha_jain.jpeg" class="leaf-avatar" alt="Megha"><div class="name-container"><div>Megha & Aman Jain</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Megha: [DOB]</span><span class="date-badge">🎂 Aman: [DOB]</span></div></div></span></li>
-                                                        <li><span class="leaf-node"><img src="shreya_tarun.jpeg" class="leaf-avatar" alt="Shreya"><div class="name-container"><div>Shreya & Tarun</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Shreya: [DOB]</span><span class="date-badge">🎂 Tarun: [DOB]</span></div></div></span></li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="megha_jain.jpeg" class="avatar" alt="Megha">
+                                                                        <img src="aman.jpeg" class="avatar" alt="Aman">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Megha & Aman Jain</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Megha: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Aman: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="shreya_t.jpeg" class="avatar" alt="Shreya">
+                                                                        <img src="tarun.jpeg" class="avatar" alt="Tarun">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Shreya & Tarun</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Shreya: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Tarun: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
                                                     </ul>
                                                 </details>
                                             </li>
@@ -1084,7 +1309,7 @@
                                                 <div class="meta-info">
                                                     <span class="date-badge">💍 Anniv: [Anniv]</span>
                                                     <span class="date-badge">🎂 Saraswati: [DOB]</span>
-                                                    <span class="date-badge">🎂 Mohanlal: [DOB]</span>
+                                                    <span class="date-badge">🌸 Mohanlal: [DOD]</span>
                                                 </div>
                                             </div>
                                         </summary>
@@ -1093,20 +1318,37 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="shrikant.jpeg" class="avatar" alt="Shrikant">
                                                             <img src="ujjwala.jpeg" class="avatar" alt="Ujjwala">
+                                                            <img src="shrikant.jpeg" class="avatar" alt="Shrikant">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Shrikant & Ujjwala Mundada</div>
+                                                            <div>Ujjwala & Shrikant Mundada</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Shrikant: [DOB]</span>
                                                                 <span class="date-badge">🎂 Ujjwala: [DOB]</span>
+                                                                <span class="date-badge">🎂 Shrikant: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
                                                     <ul>
-                                                        <li><span class="leaf-node"><img src="pratik.jpeg" class="leaf-avatar" alt="Pratik"><div class="name-container"><div>Pratik & Trupti</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Pratik: [DOB]</span><span class="date-badge">🎂 Trupti: [DOB]</span></div></div></span></li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="trupti.jpeg" class="avatar" alt="Trupti">
+                                                                        <img src="pratik.jpeg" class="avatar" alt="Pratik">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Trupti & Pratik Mundada</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Trupti: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Pratik: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
                                                         <li><span class="leaf-node"><img src="pratiksha.jpeg" class="leaf-avatar" alt="Pratiksha"><div class="name-container"><div>Pratiksha</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
                                                     </ul>
                                                 </details>
@@ -1115,15 +1357,15 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="prakash.jpeg" class="avatar" alt="Prakash">
                                                             <img src="savita.jpeg" class="avatar" alt="Savita">
+                                                            <img src="prakash.jpeg" class="avatar" alt="Prakash">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Prakash & Savita Mundada</div>
+                                                            <div>Savita & Prakash Mundada</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Prakash: [DOB]</span>
                                                                 <span class="date-badge">🎂 Savita: [DOB]</span>
+                                                                <span class="date-badge">🎂 Prakash: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
@@ -1157,20 +1399,37 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="bankatlal.jpeg" class="avatar" alt="Bankatlal">
                                                             <img src="lata.jpeg" class="avatar" alt="Lata">
+                                                            <img src="bankatlal.jpeg" class="avatar" alt="Bankatlal">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Bankatlal & Lata Mundada</div>
+                                                            <div>Lata & Bankatlal Mundada</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Bankatlal: [DOB]</span>
                                                                 <span class="date-badge">🎂 Lata: [DOB]</span>
+                                                                <span class="date-badge">🎂 Bankatlal: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
                                                     <ul>
-                                                        <li><span class="leaf-node"><img src="piyusha.jpeg" class="leaf-avatar" alt="Piyusha"><div class="name-container"><div>Piyusha</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="piyusha.jpeg" class="avatar" alt="Piyusha">
+                                                                        <img src="bhavik.jpeg" class="avatar" alt="Bhavik">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Piyusha & Bhavik</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Piyusha: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Bhavik: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
                                                         <li><span class="leaf-node"><img src="eesha.jpeg" class="leaf-avatar" alt="Eesha"><div class="name-container"><div>Eesha</div><div class="meta-info"><span class="date-badge">🎂 [DOB]</span></div></div></span></li>
                                                     </ul>
                                                 </details>
@@ -1187,7 +1446,7 @@
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
                                                                 <span class="date-badge">🎂 Manta: [DOB]</span>
-                                                                <span class="date-badge">🎂 Rameshwar: [DOB]</span>
+                                                                <span class="date-badge">🌸 Rameshwar: [DOD]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
@@ -1196,15 +1455,15 @@
                                                             <details>
                                                                 <summary>
                                                                     <div class="avatar-group">
-                                                                        <img src="sachin_sarda.jpeg" class="avatar" alt="Sachin">
                                                                         <img src="mamta.jpeg" class="avatar" alt="Mamta">
+                                                                        <img src="sachin_sarda.jpeg" class="avatar" alt="Sachin">
                                                                     </div>
                                                                     <div class="name-container">
-                                                                        <div>Sachin & Mamta Sarda</div>
+                                                                        <div>Mamta & Sachin Sarda</div>
                                                                         <div class="meta-info">
                                                                             <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Sachin: [DOB]</span>
                                                                             <span class="date-badge">🎂 Mamta: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Sachin: [DOB]</span>
                                                                         </div>
                                                                     </div>
                                                                 </summary>
@@ -1277,7 +1536,7 @@
                                                 <div>Leela & Dalichand Tapadia</div>
                                                 <div class="meta-info">
                                                     <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                    <span class="date-badge">🎂 Leela: [DOB]</span>
+                                                    <span class="date-badge">🌸 Leela: [DOD]</span>
                                                     <span class="date-badge">🎂 Dalichand: [DOB]</span>
                                                 </div>
                                             </div>
@@ -1287,15 +1546,15 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="kantilal.jpeg" class="avatar" alt="Kantilal">
                                                             <img src="sujata.jpeg" class="avatar" alt="Sujata">
+                                                            <img src="kantilal.jpeg" class="avatar" alt="Kantilal">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Kantilal & Sujata Tapadia</div>
+                                                            <div>Sujata & Kantilal Tapadia</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Kantilal: [DOB]</span>
                                                                 <span class="date-badge">🎂 Sujata: [DOB]</span>
+                                                                <span class="date-badge">🎂 Kantilal: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
@@ -1304,15 +1563,15 @@
                                                             <details>
                                                                 <summary>
                                                                     <div class="avatar-group">
-                                                                        <img src="darshan.jpeg" class="avatar" alt="Darshan">
                                                                         <img src="monika.jpeg" class="avatar" alt="Monika">
+                                                                        <img src="darshan.jpeg" class="avatar" alt="Darshan">
                                                                     </div>
                                                                     <div class="name-container">
-                                                                        <div>Darshan & Monika</div>
+                                                                        <div>Monika & Darshan Tapadia</div>
                                                                         <div class="meta-info">
                                                                             <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                            <span class="date-badge">🎂 Darshan: [DOB]</span>
                                                                             <span class="date-badge">🎂 Monika: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Darshan: [DOB]</span>
                                                                         </div>
                                                                     </div>
                                                                 </summary>
@@ -1350,20 +1609,37 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="mahendra.jpeg" class="avatar" alt="Mahendra">
                                                             <img src="sunita_t.jpeg" class="avatar" alt="Sunita">
+                                                            <img src="mahendra.jpeg" class="avatar" alt="Mahendra">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Mahendra & Sunita</div>
+                                                            <div>Sunita & Mahendra Tapadia</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Mahendra: [DOB]</span>
                                                                 <span class="date-badge">🎂 Sunita: [DOB]</span>
+                                                                <span class="date-badge">🎂 Mahendra: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
                                                     <ul>
-                                                        <li><span class="leaf-node"><img src="pradnya.jpeg" class="leaf-avatar" alt="Pradnya"><div class="name-container"><div>Pradnya & Vijay Ovhal</div><div class="meta-info"><span class="date-badge">💍 Anniv: [Anniv]</span><span class="date-badge">🎂 Pradnya: [DOB]</span><span class="date-badge">🎂 Vijay: [DOB]</span></div></div></span></li>
+                                                        <li>
+                                                            <details>
+                                                                <summary>
+                                                                    <div class="avatar-group">
+                                                                        <img src="pradnya.jpeg" class="avatar" alt="Pradnya">
+                                                                        <img src="vijay.jpeg" class="avatar" alt="Vijay">
+                                                                    </div>
+                                                                    <div class="name-container">
+                                                                        <div>Pradnya & Vijay Ovhal</div>
+                                                                        <div class="meta-info">
+                                                                            <span class="date-badge">💍 Anniv: [Anniv]</span>
+                                                                            <span class="date-badge">🎂 Pradnya: [DOB]</span>
+                                                                            <span class="date-badge">🎂 Vijay: [DOB]</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </summary>
+                                                            </details>
+                                                        </li>
                                                     </ul>
                                                 </details>
                                             </li>
@@ -1384,7 +1660,7 @@
                                                 <div class="meta-info">
                                                     <span class="date-badge">💍 Anniv: [Anniv]</span>
                                                     <span class="date-badge">🎂 Rukmini: [DOB]</span>
-                                                    <span class="date-badge">🎂 Hanumandas: [DOB]</span>
+                                                    <span class="date-badge">🌸 Hanumandas: [DOD]</span>
                                                 </div>
                                             </div>
                                         </summary>
@@ -1465,7 +1741,7 @@
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
                                                                 <span class="date-badge">🎂 Rani: [DOB]</span>
-                                                                <span class="date-badge">🎂 Umesh: [DOB]</span>
+                                                                <span class="date-badge">🌸 Umesh: [DOD]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
@@ -1522,15 +1798,15 @@
                                                 <details>
                                                     <summary>
                                                         <div class="avatar-group">
-                                                            <img src="sandesh.jpeg" class="avatar" alt="Sandesh">
                                                             <img src="khushbu.jpeg" class="avatar" alt="Khushbu">
+                                                            <img src="sandesh.jpeg" class="avatar" alt="Sandesh">
                                                         </div>
                                                         <div class="name-container">
-                                                            <div>Sandesh & Khushbu Rathi</div>
+                                                            <div>Khushbu & Sandesh Rathi</div>
                                                             <div class="meta-info">
                                                                 <span class="date-badge">💍 Anniv: [Anniv]</span>
-                                                                <span class="date-badge">🎂 Sandesh: [DOB]</span>
                                                                 <span class="date-badge">🎂 Khushbu: [DOB]</span>
+                                                                <span class="date-badge">🎂 Sandesh: [DOB]</span>
                                                             </div>
                                                         </div>
                                                     </summary>
@@ -1573,7 +1849,179 @@
             </details>
         </li>
     </ul>
+    </div> <!-- END OF TREE CONTAINER -->
+    
+    <!-- RIGHT SIDE: THE CELEBRATIONS DASHBOARD -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard</h2>
+            <select id="month-selector" class="month-dropdown">
+                <option value="Jan">January</option>
+                <option value="Feb">February</option>
+                <option value="Mar">March</option>
+                <option value="Apr">April</option>
+                <option value="May">May</option>
+                <option value="Jun">June</option>
+                <option value="Jul">July</option>
+                <option value="Aug">August</option>
+                <option value="Sep">September</option>
+                <option value="Oct">October</option>
+                <option value="Nov">November</option>
+                <option value="Dec">December</option>
+            </select>
+        </div>
+
+        <h3 id="current-month-title">Celebrations</h3>
+        <div id="events-list">
+            <!-- Events will be automatically injected here by JavaScript -->
+        </div>
+
+        <h3 id="remembrance-month-title" class="remembrance-header">Remembrances</h3>
+        <div id="remembrance-list">
+            <!-- Death Anniversaries will be automatically injected here by JavaScript -->
+        </div>
+    </div>
 </div>
+
+<!-- JAVASCRIPT AUTOMATION ENGINE -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const currentMonthIndex = new Date().getMonth(); 
+        const currentMonthName = months[currentMonthIndex];
+        
+        const monthSelector = document.getElementById('month-selector');
+        const eventsList = document.getElementById('events-list');
+        const remembranceList = document.getElementById('remembrance-list');
+        const badges = document.querySelectorAll('.date-badge');
+        
+        // Set the dropdown to the current month initially
+        monthSelector.value = currentMonthName;
+
+        // Function to render the dashboard based on the selected month
+        function renderDashboard(selectedMonth) {
+            // Clear current lists
+            eventsList.innerHTML = '';
+            remembranceList.innerHTML = '';
+            
+            let celebrations = [];
+            let remembrances = [];
+            
+            // Update Dashboard Titles
+            document.getElementById('current-month-title').innerText = `Celebrations in ${selectedMonth}`;
+            document.getElementById('remembrance-month-title').innerText = `Remembrances in ${selectedMonth}`;
+
+            badges.forEach(badge => {
+                const text = badge.textContent;
+                
+                // Look for the selected month in the text, and make sure it's not a placeholder
+                const monthRegex = new RegExp(`\\b${selectedMonth}\\b`, 'i');
+                if (monthRegex.test(text) && !text.includes('[DOB]') && !text.includes('[Anniv]') && !text.includes('[DOD]')) {
+                    
+                    // Determine event type
+                    let eventType = "Birthday";
+                    let emoji = "🎂";
+                    if (text.includes("Anniv")) { eventType = "Anniversary"; emoji = "💍"; }
+                    if (text.includes("🌸")) { eventType = "Remembrance"; emoji = "🌸"; }
+
+                    let personName = "";
+                    let eventDate = text.replace(/🎂|🌸|💍/g, '').trim();
+
+                    if (text.includes(':')) {
+                        // For couples (e.g., "🎂 Kavita: 08 May")
+                        personName = text.split(':')[0].replace(/🎂|🌸|💍/g, '').trim();
+                        eventDate = text.split(':')[1].trim();
+                        
+                        // If it's an anniversary, grab the couple's names from the parent container
+                        if(personName === "Anniv") {
+                            const nameContainer = badge.closest('.name-container');
+                            personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Couple";
+                        }
+                    } else {
+                        // For single family members (e.g., "🎂 23 Sep"), grab their name from the DOM tree
+                        const nameContainer = badge.closest('.name-container');
+                        personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Family Member";
+                    }
+
+                    // Extract the integer day for sorting (e.g., "08 May" -> 8)
+                    let dayStr = eventDate.split(' ')[0];
+                    let dayInt = parseInt(dayStr, 10);
+                    if (isNaN(dayInt)) dayInt = 0;
+
+                    // Create event object
+                    let eventObj = {
+                        eventType: eventType,
+                        emoji: emoji,
+                        personName: personName,
+                        eventDate: eventDate,
+                        dayInt: dayInt
+                    };
+
+                    if (eventType === "Remembrance") {
+                        remembrances.push(eventObj);
+                    } else {
+                        // Add WhatsApp link for celebrations
+                        let message = `Wishing you a very Happy ${eventType}! 🌟`;
+                        if(eventType === "Anniversary") {
+                            message = `Wishing ${personName} a very Happy Anniversary! 💍✨`;
+                        }
+                        eventObj.waLink = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                        celebrations.push(eventObj);
+                    }
+                }
+            });
+
+            // Sort arrays chronologically by day
+            celebrations.sort((a, b) => a.dayInt - b.dayInt);
+            remembrances.sort((a, b) => a.dayInt - b.dayInt);
+
+            // Render Celebrations
+            if (celebrations.length > 0) {
+                celebrations.forEach(ev => {
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'event-item';
+                    
+                    eventItem.innerHTML = `
+                        <div class="event-details">
+                            <strong>${ev.emoji} ${ev.personName}</strong>
+                            <span class="event-date">${ev.eventDate}</span>
+                        </div>
+                        <a href="${ev.waLink}" target="_blank" class="wa-btn">Send Wish</a>
+                    `;
+                    eventsList.appendChild(eventItem);
+                });
+            } else {
+                eventsList.innerHTML = `<div class="no-events">No celebrations found for ${selectedMonth}.</div>`;
+            }
+
+            // Render Remembrances
+            if (remembrances.length > 0) {
+                remembrances.forEach(ev => {
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'event-item';
+                    
+                    eventItem.innerHTML = `
+                        <div class="event-details">
+                            <strong>${ev.emoji} ${ev.personName}</strong>
+                            <span class="event-date">${ev.eventDate}</span>
+                        </div>
+                    `;
+                    remembranceList.appendChild(eventItem);
+                });
+            } else {
+                remembranceList.innerHTML = `<div class="no-events">No remembrances found for ${selectedMonth}.</div>`;
+            }
+        }
+
+        // Run the initial render
+        renderDashboard(currentMonthName);
+
+        // Add event listener to update when a new month is selected
+        monthSelector.addEventListener('change', (e) => {
+            renderDashboard(e.target.value);
+        });
+    });
+</script>
 
 </body>
 </html>
