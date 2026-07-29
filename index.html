@@ -16,6 +16,7 @@
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --wa-color: #25D366;
+            --calendar-color: #6366f1;
         }
 
         body {
@@ -65,14 +66,45 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
         }
 
         .sidebar-header h2 {
             margin: 0;
             color: var(--primary-color);
             font-size: 1.3em;
+        }
+
+        .sync-btn {
+            display: block;
+            width: 100%;
+            background: var(--calendar-color);
+            color: white;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1em;
+            text-decoration: none;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+        }
+
+        .sync-btn:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.35);
+        }
+
+        .dashboard-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .month-dropdown {
@@ -127,7 +159,7 @@
             color: var(--text-main);
             font-size: 1.05em;
         }
-
+        
         .event-date {
             font-size: 0.85em;
             color: var(--text-muted);
@@ -1855,6 +1887,10 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>Dashboard</h2>
+            <button id="sync-btn" class="sync-btn">🗓️ Sync All Events to Phone</button>
+        </div>
+        
+        <div class="dashboard-controls">
             <select id="month-selector" class="month-dropdown">
                 <option value="Jan">January</option>
                 <option value="Feb">February</option>
@@ -1894,6 +1930,7 @@
         const eventsList = document.getElementById('events-list');
         const remembranceList = document.getElementById('remembrance-list');
         const badges = document.querySelectorAll('.date-badge');
+        const syncBtn = document.getElementById('sync-btn');
         
         // Set the dropdown to the current month initially
         monthSelector.value = currentMonthName;
@@ -1928,7 +1965,6 @@
                     let eventDate = text.replace(/🎂|🌸|💍/g, '').trim();
 
                     if (text.includes(':')) {
-                        // For couples (e.g., "🎂 Kavita: 08 May")
                         personName = text.split(':')[0].replace(/🎂|🌸|💍/g, '').trim();
                         eventDate = text.split(':')[1].trim();
                         
@@ -1938,12 +1974,11 @@
                             personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Couple";
                         }
                     } else {
-                        // For single family members (e.g., "🎂 23 Sep"), grab their name from the DOM tree
                         const nameContainer = badge.closest('.name-container');
                         personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Family Member";
                     }
 
-                    // Extract the integer day for sorting (e.g., "08 May" -> 8)
+                    // Extract the integer day for sorting
                     let dayStr = eventDate.split(' ')[0];
                     let dayInt = parseInt(dayStr, 10);
                     if (isNaN(dayInt)) dayInt = 0;
@@ -2019,6 +2054,90 @@
         // Add event listener to update when a new month is selected
         monthSelector.addEventListener('change', (e) => {
             renderDashboard(e.target.value);
+        });
+
+        // --- CALENDAR SYNC ENGINE ---
+        syncBtn.addEventListener('click', () => {
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Jaju Family Tree//EN\n";
+            const currentYear = new Date().getFullYear();
+            const monthMap = { "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06", "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12" };
+            
+            let addedEvents = new Set(); // Prevent duplicate entries
+
+            badges.forEach(badge => {
+                const text = badge.textContent;
+                
+                // Only process dates that have been filled out (skip placeholders)
+                if (!text.includes('[DOB]') && !text.includes('[Anniv]') && !text.includes('[DOD]')) {
+                    let eventType = "Birthday";
+                    let emoji = "🎂";
+                    if (text.includes("Anniv")) { eventType = "Anniversary"; emoji = "💍"; }
+                    if (text.includes("🌸")) { eventType = "Remembrance"; emoji = "🌸"; }
+
+                    let personName = "";
+                    let eventDate = text.replace(/🎂|🌸|💍/g, '').trim();
+
+                    if (text.includes(':')) {
+                        personName = text.split(':')[0].replace(/🎂|🌸|💍/g, '').trim();
+                        eventDate = text.split(':')[1].trim();
+                        if(personName === "Anniv") {
+                            const nameContainer = badge.closest('.name-container');
+                            personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Couple";
+                        }
+                    } else {
+                        const nameContainer = badge.closest('.name-container');
+                        personName = nameContainer ? nameContainer.firstElementChild.textContent.trim() : "Family Member";
+                    }
+
+                    // Extract Day and Month
+                    let dateParts = eventDate.split(' ');
+                    if (dateParts.length >= 2) {
+                        let dayStr = dateParts[0].padStart(2, '0');
+                        let monthStr = monthMap[dateParts[1].substring(0, 3)];
+
+                        if (dayStr && monthStr) {
+                            let eventTitle = `${emoji} ${personName} (${eventType})`;
+                            let uniqueKey = `${eventTitle}-${dayStr}-${monthStr}`;
+
+                            if (!addedEvents.has(uniqueKey)) {
+                                addedEvents.add(uniqueKey);
+
+                                // Format dates for ICS
+                                let startDate = new Date(`${currentYear}-${monthStr}-${dayStr}`);
+                                let endDate = new Date(startDate);
+                                endDate.setDate(endDate.getDate() + 1); // ICS all-day events end on the next day
+
+                                let startFormat = `${currentYear}${monthStr}${dayStr}`;
+                                let endDay = String(endDate.getDate()).padStart(2, '0');
+                                let endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+                                let endFormat = `${endDate.getFullYear()}${endMonth}${endDay}`;
+
+                                let uuid = Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+                                icsContent += "BEGIN:VEVENT\n";
+                                icsContent += `UID:${uuid}@jajufamily\n`;
+                                icsContent += `DTSTAMP:${currentYear}0101T000000Z\n`;
+                                icsContent += `DTSTART;VALUE=DATE:${startFormat}\n`;
+                                icsContent += `DTEND;VALUE=DATE:${endFormat}\n`;
+                                icsContent += `RRULE:FREQ=YEARLY\n`; // Set to repeat every year
+                                icsContent += `SUMMARY:${eventTitle}\n`;
+                                icsContent += "END:VEVENT\n";
+                            }
+                        }
+                    }
+                }
+            });
+
+            icsContent += "END:VCALENDAR";
+
+            // Trigger the download of the ICS file
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'Jaju_Family_Events.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
     });
 </script>
