@@ -378,7 +378,7 @@
            down the whole list - leaner than a two-row layout */
         .lean-item-v3 {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto auto auto;
+            grid-template-columns: minmax(0, 1fr) auto auto minmax(0, auto);
             align-items: center;
             column-gap: 8px;
             padding: 6px 2px;
@@ -391,7 +391,9 @@
         .lean-item-v3 .li-name a:hover { color: var(--secondary-color); text-decoration: underline; }
         .lean-item-v3 .li-date { color: var(--text-muted); white-space: nowrap; font-size: 0.95em; }
         .lean-item-v3 .li-badge-slot { display: flex; }
-        .lean-item-v3 .li-actions { display: flex; gap: 4px; }
+        .lean-item-v3 .li-actions {
+            display: flex; flex-wrap: wrap; gap: 5px; align-items: center; justify-content: flex-end;
+        }
 
         .li-badge {
             font-size: 0.75em; font-weight: 700; padding: 2px 8px; border-radius: 10px; white-space: nowrap;
@@ -399,17 +401,18 @@
         .li-badge-age { background: #dbeafe; color: #1d4ed8; }
         .li-badge-tithi { background: #fce7f3; color: #be185d; }
 
-        .wa-btn-sm {
+        .wa-arrow { color: var(--text-muted); font-weight: 700; }
+        .wa-tab {
             background: var(--wa-color); color: white; text-decoration: none;
-            padding: 3px 8px; border-radius: 10px; font-size: 0.85em; font-weight: 700;
-            display: inline-block; line-height: 1.3;
+            padding: 4px 11px; border-radius: 8px; font-size: 0.78em; font-weight: 700;
+            display: inline-block; line-height: 1.3; white-space: nowrap;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-        .wa-btn-sm:hover { background: #128C7E; }
-        .wa-btn-sm-hi { background: #ea580c; padding: 4px 10px; }
-        .wa-btn-sm-hi:hover { background: #c2410c; }
-        .wa-btn-sm-belated { background: #d97706; }
-        .wa-btn-sm-belated:hover { background: #b45309; }
+        .wa-tab:hover { background: #128C7E; }
+        .wa-tab-hi { background: #ea580c; }
+        .wa-tab-hi:hover { background: #c2410c; }
+        .wa-tab-belated { background: #d97706; }
+        .wa-tab-belated:hover { background: #b45309; }
 
         /* ===================== NEW: relationship finder ===================== */
         .relation-finder { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
@@ -447,7 +450,7 @@
         @media print {
             .tree-toolbar, .search-result-count, #suggest-update-btn, .app-tabs,
             .relation-finder, .modal-overlay, .column-controls, .ancestor-stub, .ancestor-toggle-prompt,
-            .btn-primary, .btn-secondary, .wa-btn-sm, .sync-btn, .root-expand-toggle-btn { display: none !important; }
+            .btn-primary, .btn-secondary, .wa-tab, .wa-arrow, .sync-btn, .root-expand-toggle-btn { display: none !important; }
             .main-wrapper { display: block; }
             .app-tab-pane { display: block !important; }
             #tab-upcoming, #tab-celebrations { display: none !important; }
@@ -563,6 +566,18 @@
             white-space: nowrap; font-family: inherit; transition: background 0.2s ease;
         }
         .root-expand-toggle-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* ===================== NEW: Son/Daughter relation capsule ===================== */
+        .relation-badge {
+            display: inline-block; font-size: 0.72em; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.4px; padding: 3px 10px; border-radius: 10px; color: white;
+            vertical-align: middle; margin-right: 2px;
+        }
+        .relation-badge-son { background: var(--secondary-color); }
+        .relation-badge-daughter { background: #db2777; }
+        /* On the dark root-summary row, use translucent white instead so it
+           doesn't clash with the navy background. */
+        .root-summary .relation-badge { background: rgba(255,255,255,0.25) !important; color: white; }
 
         /* ===================== NEW: mobile toolbar collapse ===================== */
         .toolbar-more-toggle-btn { display: none; }
@@ -857,7 +872,7 @@ document.addEventListener("DOMContentLoaded", () => {
             badges.push({ emoji: '💍', text });
         }
         node.people.forEach(p => {
-            if (p.dob) {
+            if (p.dob && !p.dod) {
                 const dateText = p.dob.isPlaceholder ? '[DOB]' : dobDisplayWithAge(p.dob.date);
                 const text = isCouple ? `${p.name}: ${dateText}` : dateText;
                 badges.push({ emoji: '🎂', text });
@@ -886,22 +901,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------------
     // Tree rendering
     // ---------------------------------------------------------------
+    function relationBadge(relation) {
+        const cls = /daughter/i.test(relation) ? 'relation-badge relation-badge-daughter' : 'relation-badge relation-badge-son';
+        return `<span class="${cls}">${escapeHtml(relation)}</span>`;
+    }
+
     function renderNameLine(node) {
         if (!node.relation) return escapeHtml(node.displayName);
+        const badge = relationBadge(node.relation);
         if (node.people.length < 2) {
-            return `${escapeHtml(node.relation)}: ${escapeHtml(node.displayName)}`;
+            return `${badge} ${escapeHtml(node.displayName)}`;
         }
-        // Place the Son/Daughter label next to whichever name is actually
+        // Place the Son/Daughter badge next to whichever name is actually
         // the blood relative, not just at the start of the (now wife-first)
         // couple string - avoids implying the label describes the spouse.
         const parts = node.displayName.split(' & ');
         if (parts.length !== 2) {
-            return `${escapeHtml(node.relation)}: ${escapeHtml(node.displayName)}`;
+            return `${badge} ${escapeHtml(node.displayName)}`;
         }
         const bloodIdx = isBloodRelative(node, 0) ? 0 : 1;
         return bloodIdx === 0
-            ? `${escapeHtml(node.relation)}: ${escapeHtml(parts[0])} & ${escapeHtml(parts[1])}`
-            : `${escapeHtml(parts[0])} & ${escapeHtml(node.relation)}: ${escapeHtml(parts[1])}`;
+            ? `${badge} ${escapeHtml(parts[0])} & ${escapeHtml(parts[1])}`
+            : `${escapeHtml(parts[0])} & ${badge} ${escapeHtml(parts[1])}`;
     }
 
     function renderAvatarGroup(node) {
@@ -1095,7 +1116,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
             node.people.forEach(p => {
-                if (p.dob && !p.dob.isPlaceholder && p.dob.date) {
+                if (p.dob && !p.dob.isPlaceholder && p.dob.date && !p.dod) {
                     events.push({
                         type: 'birthday', emoji: '🎂', personName: p.fullName || p.name,
                         branchId: node.id || '', month: p.dob.date.month,
@@ -1175,10 +1196,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function leanItemHtml(ev, withWaBtn) {
         const belated = withWaBtn && ev.month && ev.day && hasPassedThisYear(ev.month, ev.day);
-        const wishLabel = belated ? 'Belated' : 'Wish';
+        const wishLabel = belated ? 'Belated Wish' : 'Wish';
         const wa = withWaBtn
-            ? `<a href="${waLinkFor(ev, 'en')}" target="_blank" class="wa-btn-sm${belated ? ' wa-btn-sm-belated' : ''}" data-wa-copy="${escapeHtml(waMessageFor(ev, 'en'))}">${wishLabel}</a>` +
-              `<a href="${waLinkFor(ev, 'hi')}" target="_blank" class="wa-btn-sm wa-btn-sm-hi" data-wa-copy="${escapeHtml(waMessageFor(ev, 'hi'))}">HI</a>`
+            ? `<span class="wa-arrow">›</span>` +
+              `<a href="${waLinkFor(ev, 'en')}" target="_blank" class="wa-tab${belated ? ' wa-tab-belated' : ''}" data-wa-copy="${escapeHtml(waMessageFor(ev, 'en'))}">${wishLabel} · English</a>` +
+              `<a href="${waLinkFor(ev, 'hi')}" target="_blank" class="wa-tab wa-tab-hi" data-wa-copy="${escapeHtml(waMessageFor(ev, 'hi'))}">${wishLabel} · Hindi</a>`
             : '';
 
         let dateText = ev.display;
@@ -1538,7 +1560,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const spouse = isCouple ? node.people[(personIdx + 1) % node.people.length] : null;
 
         let rows = '';
-        if (person.dob && !person.dob.isPlaceholder) {
+        if (person.dob && !person.dob.isPlaceholder && !person.dod) {
             rows += `<div class="detail-row"><span class="d-label">Birthday</span><span>🎂 ${escapeHtml(dobDisplayWithAge(person.dob.date))}</span></div>`;
         }
         if (person.dod) {
