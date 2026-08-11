@@ -442,9 +442,9 @@
 
         /* ===================== NEW: print / PDF ===================== */
         @media print {
-            .tree-toolbar, .search-result-count, #suggest-update-btn, #add-member-btn,
+            .tree-toolbar, .search-result-count, #suggest-update-btn,
             .relation-finder, .modal-overlay, .column-controls, .ancestor-stub, .ancestor-toggle-prompt,
-            .btn-primary, .btn-secondary, .wa-btn-sm, .sync-btn { display: none !important; }
+            .btn-primary, .btn-secondary, .wa-btn-sm, .sync-btn, .root-expand-toggle-btn { display: none !important; }
             .main-wrapper { display: block; }
             .tree-container, .digest-region, .celeb-column, .rememb-column { width: 100% !important; box-shadow: none; break-inside: avoid; }
             .digest-split-row { display: block; }
@@ -551,6 +551,15 @@
             .celeb-column, .rememb-column { width: 100%; }
         }
 
+        /* ===================== NEW: root expand/collapse toggle ===================== */
+        .root-expand-toggle-btn {
+            margin-left: 16px; background: rgba(255,255,255,0.18); color: white;
+            border: 1px solid rgba(255,255,255,0.35); border-radius: 8px;
+            padding: 5px 12px; font-size: 0.75em; font-weight: 700; cursor: pointer;
+            white-space: nowrap; font-family: inherit; transition: background 0.2s ease;
+        }
+        .root-expand-toggle-btn:hover { background: rgba(255,255,255,0.3); }
+
         /* ===================== NEW: mobile toolbar collapse ===================== */
         .toolbar-more-toggle-btn { display: none; }
         @media (max-width: 768px) {
@@ -572,12 +581,10 @@
 
         <div class="tree-toolbar">
             <input type="text" id="tree-search" class="search-input" placeholder="🔍 Search family members...">
-            <button id="add-member-btn" class="btn-primary">+ Add Member</button>
-            <button id="suggest-update-btn" class="btn-secondary">📢 Suggest an Update</button>
+            <button id="suggest-update-btn" class="btn-primary">📢 Suggest an Update</button>
             <button id="toolbar-more-toggle" class="btn-secondary toolbar-more-toggle-btn">⋯ More</button>
         </div>
         <div class="tree-toolbar toolbar-secondary" id="toolbar-secondary">
-            <button id="expand-collapse-toggle-btn" class="btn-secondary" title="Expand all branches">⊞ All</button>
             <select id="pdf-root-select" class="search-input" style="flex:1 1 220px;"></select>
             <button id="pdf-btn" class="btn-secondary">📄 Download PDF</button>
             <button id="changelog-btn" class="btn-secondary">🕘 What's New</button>
@@ -658,80 +665,6 @@
     <div class="modal-box">
         <button class="modal-close" data-close-modal="person-modal">&times;</button>
         <div id="person-modal-content"></div>
-    </div>
-</div>
-
-<!-- ===================== Add family member modal ===================== -->
-<div id="add-member-modal" class="modal-overlay" style="display:none;">
-    <div class="modal-box">
-        <button class="modal-close" data-close-modal="add-member-modal">&times;</button>
-        <h3>Add Family Member</h3>
-        <form id="add-member-form">
-            <div class="form-group">
-                <label for="fm-parent">Add as a child of</label>
-                <select id="fm-parent"></select>
-            </div>
-            <div class="form-group">
-                <label for="fm-relation">Relation</label>
-                <select id="fm-relation">
-                    <option value="Son">Son</option>
-                    <option value="Daughter">Daughter</option>
-                    <option value="Son-in-law">Son-in-law</option>
-                    <option value="Daughter-in-law">Daughter-in-law</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="fm-type">Type</label>
-                <select id="fm-type">
-                    <option value="single">Single person</option>
-                    <option value="couple">Couple (with spouse)</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fm-name1">Name</label>
-                    <input type="text" id="fm-name1" required placeholder="e.g. Aryan">
-                </div>
-                <div class="form-group">
-                    <label for="fm-dob1">Birthday</label>
-                    <input type="text" id="fm-dob1" placeholder="e.g. 14 Feb">
-                </div>
-            </div>
-
-            <div id="fm-spouse-fields" style="display:none;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="fm-name2">Spouse name</label>
-                        <input type="text" id="fm-name2" placeholder="e.g. Priya">
-                    </div>
-                    <div class="form-group">
-                        <label for="fm-dob2">Spouse birthday</label>
-                        <input type="text" id="fm-dob2" placeholder="e.g. 03 Sep">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="fm-anniv">Anniversary</label>
-                    <input type="text" id="fm-anniv" placeholder="e.g. 21 Nov">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fm-avatar1">Photo filename</label>
-                    <input type="text" id="fm-avatar1" placeholder="e.g. aryan.jpeg">
-                </div>
-                <div class="form-group" id="fm-avatar2-group" style="display:none;">
-                    <label for="fm-avatar2">Spouse photo filename</label>
-                    <input type="text" id="fm-avatar2" placeholder="e.g. priya.jpeg">
-                </div>
-            </div>
-            <div class="form-hint">Dates: "DD Mon" format (e.g. "14 Feb"). Leave blank if unknown. Photo files should be placed in the same folder as this HTML file — this form doesn't upload the image itself.</div>
-
-            <div class="modal-actions">
-                <button type="submit" class="btn-primary">Add &amp; Download Updated File</button>
-            </div>
-        </form>
     </div>
 </div>
 
@@ -834,18 +767,12 @@ const FAMILY_DATA = [{"kind":"single","id":"branch-surajmalji-jaju","relation":"
 // Jaju Family Tree & Dashboard — data-driven engine
 //
 // Everything (tree markup + dashboard) renders from FAMILY_DATA, a
-// single JS array embedded in the page. To add a family member by
-// hand, edit FAMILY_DATA — or use the in-page "+ Add Family Member"
-// form, which edits it for you and hands back an updated HTML file.
+// single JS array embedded in the page. To add or correct a family
+// member, edit FAMILY_DATA directly, or use the "Suggest an Update"
+// form, which files a GitHub issue for the admin to review and apply.
 // =====================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Capture a pristine copy of the page's HTML + the original data
-    // script's exact text BEFORE we render anything or inject any UI.
-    // This is what "Add & Download" uses to produce a clean updated file.
-    const PRISTINE_HTML = document.documentElement.outerHTML;
-    const PRISTINE_DATA_TEXT = document.getElementById('family-data-script').textContent;
-
     const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const currentMonthName = MONTHS[new Date().getMonth()];
 
@@ -872,25 +799,6 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
-    }
-
-    function slugify(name) {
-        return String(name).toLowerCase().trim()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-+|-+$)/g, '') || 'person';
-    }
-
-    function parseDateInput(text) {
-        if (!text) return null;
-        const m = String(text).trim().match(/(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3})[a-z]*(?:\s+(\d{4}))?/);
-        if (!m) return null;
-        const day = parseInt(m[1], 10);
-        const monAbbr = m[2].slice(0, 3).charAt(0).toUpperCase() + m[2].slice(1, 3).toLowerCase();
-        const monthIdx = MONTHS.indexOf(monAbbr);
-        if (monthIdx === -1 || day < 1 || day > 31) return null;
-        const result = { display: `${String(day).padStart(2, '0')} ${monAbbr}`, month: monthIdx + 1, day };
-        if (m[3]) result.year = parseInt(m[3], 10);
-        return result;
     }
 
     function avatarImgTag(person, cls, nodeId, personIdx) {
@@ -1000,12 +908,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const childrenHtml = node.children && node.children.length
             ? `<ul>${node.children.map(c => renderNode(c, stubAtId)).join('')}</ul>`
             : '';
+        // Only the anchor root gets this - it acts on the whole tree, so it
+        // lives right next to the row it controls rather than in a toolbar.
+        const expandToggleHtml = forceRootStyle
+            ? `<button type="button" class="root-expand-toggle-btn" title="Expand all branches">⊞ All</button>`
+            : '';
 
         return `<li><details${idAttr}${openAttr} data-search="${escapeHtml(searchTextFor(node))}">` +
             `<summary${summaryClass}>` +
             renderAvatarGroup(node) +
             `<div class="name-container"><div>${renderNameLine(node)}</div>` +
             `<div class="meta-info">${badgesHtml(node)}</div></div>` +
+            expandToggleHtml +
             `</summary>` +
             childrenHtml +
             `</details></li>`;
@@ -1533,7 +1447,11 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.addEventListener('input', (e) => applySearch(e.target.value));
 
     let treeIsExpanded = false;
-    document.getElementById('expand-collapse-toggle-btn').addEventListener('click', (e) => {
+    treeRoot.addEventListener('click', (e) => {
+        const toggleBtn = e.target.closest('.root-expand-toggle-btn');
+        if (!toggleBtn) return;
+        e.preventDefault();
+        e.stopPropagation();
         treeIsExpanded = !treeIsExpanded;
         if (treeIsExpanded) {
             treeRoot.querySelectorAll('details').forEach(d => { d.open = true; });
@@ -1541,14 +1459,14 @@ document.addEventListener("DOMContentLoaded", () => {
             ancestorsRevealed = chain.length;
             renderAncestorsPanel();
             ancestorsRoot.querySelectorAll('details').forEach(d => { d.open = true; });
-            e.target.textContent = '⊟ All';
-            e.target.title = 'Collapse all branches';
+            toggleBtn.textContent = '⊟ All';
+            toggleBtn.title = 'Collapse all branches';
         } else {
             treeRoot.querySelectorAll('details').forEach(d => { d.open = false; });
             ancestorsRevealed = 0;
             renderAncestorsPanel();
-            e.target.textContent = '⊞ All';
-            e.target.title = 'Expand all branches';
+            toggleBtn.textContent = '⊞ All';
+            toggleBtn.title = 'Expand all branches';
         }
     });
 
@@ -1874,38 +1792,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------------
-    // Add Family Member
-    // ---------------------------------------------------------------
-    const fmParent = document.getElementById('fm-parent');
-    const fmType = document.getElementById('fm-type');
-    const fmSpouseFields = document.getElementById('fm-spouse-fields');
-    const fmAvatar2Group = document.getElementById('fm-avatar2-group');
-
-    function populateParentDropdown() {
-        const options = [];
-        Object.keys(nodeIndex).forEach(id => {
-            const entry = nodeIndex[id];
-            if (entry.node.kind === 'leaf') return; // leaves can't have children
-            const indent = '— '.repeat(Math.max(0, entry.depth - 1));
-            const label = `${entry.node.relation ? entry.node.relation + ': ' : ''}${entry.node.displayName}`;
-            options.push({ id, label: indent + label, depth: entry.depth });
-        });
-        options.sort((a, b) => a.depth - b.depth);
-        fmParent.innerHTML = options.map(o => `<option value="${o.id}">${escapeHtml(o.label)}</option>`).join('');
-    }
-
-    fmType.addEventListener('change', () => {
-        const isCouple = fmType.value === 'couple';
-        fmSpouseFields.style.display = isCouple ? 'block' : 'none';
-        fmAvatar2Group.style.display = isCouple ? 'block' : 'none';
-    });
-
-    document.getElementById('add-member-btn').addEventListener('click', () => {
-        populateParentDropdown();
-        openModal('add-member-modal');
-    });
-
-    // ---------------------------------------------------------------
     // Suggest an Update — sends to a small backend that files a
     // GitHub issue in the admin's repo for review. See README /
     // SETUP notes for how SUGGESTION_ENDPOINT gets configured.
@@ -2026,120 +1912,6 @@ document.addEventListener("DOMContentLoaded", () => {
             submitBtn.textContent = 'Submit for Review';
         }
     });
-
-    function ownSurnameOf(displayName) {
-        const right = displayName.includes(' & ') ? displayName.split(' & ')[1].trim() : displayName.trim();
-        const toks = right.split(/\s+/);
-        return toks.length >= 2 ? toks[toks.length - 1] : null;
-    }
-    function resolveSurnameFor(nodeId) {
-        let cur = nodeId;
-        while (cur) {
-            const entry = nodeIndex[cur];
-            if (!entry) return null;
-            const s = ownSurnameOf(entry.node.displayName);
-            if (s) return s;
-            cur = entry.parentId;
-        }
-        return null;
-    }
-
-    document.getElementById('add-member-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const parentId = fmParent.value;
-        const parentEntry = nodeIndex[parentId];
-        if (!parentEntry) { alert('Please choose who this person is a child of.'); return; }
-
-        const relation = document.getElementById('fm-relation').value;
-        const type = fmType.value;
-        const name1 = document.getElementById('fm-name1').value.trim();
-        const dob1raw = document.getElementById('fm-dob1').value.trim();
-        const avatar1 = document.getElementById('fm-avatar1').value.trim();
-
-        if (!name1) { alert('Please enter a name.'); return; }
-
-        const surname = resolveSurnameFor(parentId);
-        const gender1 = (relation === 'Son' || relation === 'Son-in-law') ? 'male' : 'female';
-        const dob1parsed = parseDateInput(dob1raw);
-        const person1 = {
-            name: name1,
-            fullName: surname && !name1.toLowerCase().endsWith(surname.toLowerCase()) ? `${name1} ${surname}` : name1,
-            avatar: avatar1 || null,
-            gender: gender1,
-            dob: dob1parsed ? { date: dob1parsed, tithi: null, isPlaceholder: false } : null,
-            dod: null
-        };
-
-        let people = [person1];
-        let anniversary = null;
-        let displayName = name1;
-
-        if (type === 'couple') {
-            const name2 = document.getElementById('fm-name2').value.trim();
-            const dob2raw = document.getElementById('fm-dob2').value.trim();
-            const avatar2 = document.getElementById('fm-avatar2').value.trim();
-            const annivRaw = document.getElementById('fm-anniv').value.trim();
-            if (name2) {
-                const dob2parsed = parseDateInput(dob2raw);
-                const person2 = {
-                    name: name2,
-                    fullName: surname && !name2.toLowerCase().endsWith(surname.toLowerCase()) ? `${name2} ${surname}` : name2,
-                    avatar: avatar2 || null,
-                    gender: gender1 === 'male' ? 'female' : 'male',
-                    dob: dob2parsed ? { date: dob2parsed, tithi: null, isPlaceholder: false } : null,
-                    dod: null
-                };
-                // store wife-first, matching the rest of the tree
-                people = gender1 === 'female' ? [person1, person2] : [person2, person1];
-                displayName = `${people[0].name} & ${people[1].name}`;
-            }
-            const annivDate = parseDateInput(annivRaw);
-            if (annivDate) anniversary = { date: annivDate, isPlaceholder: false };
-        }
-
-        let newId = `branch-${slugify(name1)}`;
-        if (nodeIndex[newId]) {
-            let n = 2;
-            while (nodeIndex[`${newId}-${n}`]) n++;
-            newId = `${newId}-${n}`;
-        }
-
-        const newNode = {
-            kind: people.length > 1 ? 'couple' : 'single',
-            id: newId,
-            relation: relation,
-            displayName: displayName,
-            isRoot: false,
-            defaultOpen: false,
-            people: people,
-            anniversary: anniversary,
-            children: []
-        };
-
-        parentEntry.node.children = parentEntry.node.children || [];
-        parentEntry.node.children.push(newNode);
-
-        refreshAll();
-        downloadUpdatedFile();
-        closeModal('add-member-modal');
-        e.target.reset();
-        fmSpouseFields.style.display = 'none';
-        fmAvatar2Group.style.display = 'none';
-        window.openBranch(newId);
-    });
-
-    function downloadUpdatedFile() {
-        const newDataText = `\nconst FAMILY_DATA = ${JSON.stringify(FAMILY_DATA)};\n`;
-        const newHtml = PRISTINE_HTML.replace(PRISTINE_DATA_TEXT, newDataText);
-        const blob = new Blob([newHtml], { type: 'text/html;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.setAttribute('download', 'Jaju_Family_Tree_updated.html');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 
     // ---------------------------------------------------------------
     // Calendar (.ics) export
