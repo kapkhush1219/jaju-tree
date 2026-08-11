@@ -246,13 +246,32 @@
             .tree-container, .dashboard-container, .celeb-column, .rememb-column { width: 100%; overflow: visible; }
         }
     
-        /* ===================== NEW: 3-column layout ===================== */
+        /* ===================== NEW: 60-40 layout with combined digest region ===================== */
         .main-wrapper { align-items: stretch; }
-        .tree-container { width: 50%; }
-        .celeb-column, .rememb-column {
-            width: 25%;
+        .tree-container { width: 60%; }
+        .digest-region {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .digest-controls-card {
             background: var(--card-bg);
-            padding: 20px 25px;
+            padding: 16px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .digest-split-row {
+            display: flex;
+            gap: 16px;
+            flex: 1;
+            min-height: 0;
+        }
+        .celeb-column, .rememb-column {
+            width: 50%;
+            background: var(--card-bg);
+            padding: 20px 22px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,255,255,0.5);
@@ -344,19 +363,94 @@
         .lean-item .li-left a { color: var(--text-main); text-decoration: none; }
         .lean-item .li-left a:hover { color: var(--secondary-color); text-decoration: underline; }
         .lean-item .li-right { display: flex; align-items: center; gap: 6px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+
+        /* single-row grid: Name | Date | Badge | Actions, aligned as columns
+           down the whole list - leaner than a two-row layout */
+        .lean-item-v3 {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto auto;
+            align-items: center;
+            column-gap: 8px;
+            padding: 6px 2px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.82em;
+        }
+        .lean-item-v3:last-child { border-bottom: none; }
+        .lean-item-v3 .li-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lean-item-v3 .li-name a { color: var(--text-main); text-decoration: none; }
+        .lean-item-v3 .li-name a:hover { color: var(--secondary-color); text-decoration: underline; }
+        .lean-item-v3 .li-date { color: var(--text-muted); white-space: nowrap; font-size: 0.95em; }
+        .lean-item-v3 .li-badge-slot { display: flex; }
+        .lean-item-v3 .li-actions { display: flex; gap: 4px; }
+
+        .li-badge {
+            font-size: 0.75em; font-weight: 700; padding: 2px 8px; border-radius: 10px; white-space: nowrap;
+        }
+        .li-badge-age { background: #dbeafe; color: #1d4ed8; }
+        .li-badge-tithi { background: #fce7f3; color: #be185d; }
+
         .wa-btn-sm {
             background: var(--wa-color); color: white; text-decoration: none;
-            padding: 3px 9px; border-radius: 12px; font-size: 0.75em; font-weight: 600;
+            padding: 3px 8px; border-radius: 10px; font-size: 0.85em; font-weight: 700;
+            display: inline-block; line-height: 1.3;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         .wa-btn-sm:hover { background: #128C7E; }
+        .wa-btn-sm-hi { background: #ea580c; padding: 4px 10px; }
+        .wa-btn-sm-hi:hover { background: #c2410c; }
+        .wa-btn-sm-belated { background: #d97706; }
+        .wa-btn-sm-belated:hover { background: #b45309; }
 
         /* ===================== NEW: relationship finder ===================== */
         .relation-finder { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; }
-        .rf-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .rf-row select { flex: 1 1 150px; padding: 7px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85em; background: #fff; }
+        .rf-row { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; }
+        .rf-row select { flex: 1 1 90px; min-width: 0; padding: 7px 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85em; background: #fff; }
         .rf-and { color: var(--text-muted); font-weight: 600; font-size: 0.85em; }
         .rf-result { margin-top: 10px; font-size: 0.88em; color: var(--primary-color); font-weight: 600; min-height: 1.2em; }
         .rf-hindi { margin-top: 4px; font-size: 0.85em; color: var(--secondary-color); font-weight: 600; }
+
+        /* ===================== NEW: changelog ===================== */
+        .changelog-entry { padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .changelog-entry:last-child { border-bottom: none; }
+        .changelog-date { font-size: 0.75em; font-weight: 700; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 0.5px; }
+        .changelog-summary { font-size: 0.9em; margin-top: 3px; line-height: 1.4; }
+
+        /* ===================== NEW: health check ===================== */
+        .health-row {
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+            padding: 9px 2px; border-bottom: 1px solid var(--border-color); font-size: 0.88em;
+        }
+        .health-row:last-child { border-bottom: none; }
+        .health-issue { color: var(--text-muted); font-size: 0.85em; }
+        .health-nudge-btn {
+            background: #25D366; color: white; text-decoration: none; padding: 5px 12px;
+            border-radius: 14px; font-size: 0.78em; font-weight: 600; white-space: nowrap;
+        }
+        .health-nudge-btn:hover { background: #128C7E; }
+        .health-nudge-btn-hi { background: #ea580c; padding: 5px 10px; }
+        .health-nudge-btn-hi:hover { background: #c2410c; }
+        .health-summary { font-size: 0.85em; color: var(--text-muted); margin-bottom: 10px; }
+
+        /* ===================== NEW: wa-copy toast ===================== */
+        .wa-copy-toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: #1e293b; color: white; padding: 10px 18px; border-radius: 20px;
+            font-size: 0.85em; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 2000;
+        }
+        .wa-copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ===================== NEW: print / PDF ===================== */
+        @media print {
+            .tree-toolbar, .search-result-count, #suggest-update-btn, #add-member-btn,
+            .relation-finder, .modal-overlay, .column-controls, .ancestor-stub, .ancestor-toggle-prompt,
+            .btn-primary, .btn-secondary, .wa-btn-sm, .sync-btn { display: none !important; }
+            .main-wrapper { display: block; }
+            .tree-container, .digest-region, .celeb-column, .rememb-column { width: 100% !important; box-shadow: none; break-inside: avoid; }
+            .digest-split-row { display: block; }
+            body { background: white; }
+            details { break-inside: avoid; }
+        }
 
         /* ===================== NEW: tithi clustering ===================== */
         .tithi-group-label {
@@ -366,18 +460,56 @@
         }
         .tithi-group-label:first-child { margin-top: 0; }
 
+        /* ===================== NEW: tithi calendar grid ===================== */
+        .tithi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; }
+        .tithi-cell {
+            cursor: pointer; text-align: center; padding: 8px 4px; border-radius: 8px;
+            border: 1px solid var(--border-color); background: #fdf2f8; font-size: 0.75em;
+            font-weight: 600; color: #9d174d; transition: all 0.15s ease;
+        }
+        .tithi-cell:hover { border-color: #f472b6; }
+        .tithi-cell.active { background: #fce7f3; border-color: #db2777; }
+        .tithi-cell-count {
+            display: block; font-size: 0.85em; font-weight: 700; margin-top: 3px; color: #be185d;
+        }
+        .tithi-detail {
+            margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border-color);
+        }
+        .tithi-detail-title {
+            font-size: 0.78em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+            color: #be185d; margin-bottom: 6px;
+        }
+
+        /* ===================== NEW: celebrations calendar grid ===================== */
+        .celeb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+        .celeb-cell {
+            cursor: pointer; text-align: center; padding: 8px 4px; border-radius: 8px;
+            border: 1px solid var(--border-color); background: #eff6ff; font-size: 0.78em;
+            font-weight: 700; color: #1d4ed8; transition: all 0.15s ease;
+        }
+        .celeb-cell:hover { border-color: #60a5fa; }
+        .celeb-cell.active { background: #dbeafe; border-color: #2563eb; }
+        .celeb-cell-icon { display: block; font-size: 1.1em; margin-bottom: 2px; }
+        .celeb-cell-day { display: block; }
+        .celeb-cell-count {
+            display: block; font-size: 0.8em; font-weight: 700; margin-top: 2px; color: #2563eb;
+        }
+        .celeb-detail { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border-color); }
+
         /* ===================== NEW: ancestors panel ===================== */
         .ancestors-panel { margin-bottom: 18px; }
-        .ancestors-label {
-            font-size: 0.7em; font-weight: 700; letter-spacing: 0.8px; color: var(--text-muted);
-            margin-bottom: 6px;
-        }
         .ancestor-stub {
             cursor: pointer; padding: 8px 14px; border-radius: 10px; background: #f8fafc;
             border: 1px dashed #cbd5e1; color: var(--secondary-color); font-size: 0.9em; font-weight: 600;
             transition: all 0.2s ease;
         }
         .ancestor-stub:hover { background: #eff6ff; border-color: var(--secondary-color); }
+        .ancestor-toggle-prompt {
+            cursor: pointer; padding: 8px 14px; border-radius: 10px; background: #f8fafc;
+            border: 1px dashed #cbd5e1; color: var(--secondary-color); font-size: 0.85em; font-weight: 600;
+            margin-bottom: 8px; transition: all 0.2s ease;
+        }
+        .ancestor-toggle-prompt:hover { background: #eff6ff; border-color: var(--secondary-color); }
 
         /* ===================== NEW: Modals ===================== */
         .modal-overlay {
@@ -414,7 +546,17 @@
         .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
 
         @media (max-width: 1200px) {
-            .tree-container, .celeb-column, .rememb-column { width: 100%; }
+            .tree-container, .digest-region { width: 100%; }
+            .digest-split-row { flex-direction: column; }
+            .celeb-column, .rememb-column { width: 100%; }
+        }
+
+        /* ===================== NEW: mobile toolbar collapse ===================== */
+        .toolbar-more-toggle-btn { display: none; }
+        @media (max-width: 768px) {
+            .toolbar-more-toggle-btn { display: inline-block; }
+            .toolbar-secondary.toolbar-secondary { display: none; }
+            .toolbar-secondary.toolbar-secondary.show { display: flex; }
         }
 
     </style>
@@ -430,11 +572,16 @@
 
         <div class="tree-toolbar">
             <input type="text" id="tree-search" class="search-input" placeholder="🔍 Search family members...">
-            <button id="ancestors-btn" class="btn-secondary">↑ View Ancestors</button>
-            <button id="expand-all-btn" class="btn-secondary">Expand All</button>
-            <button id="collapse-all-btn" class="btn-secondary">Collapse All</button>
-            <button id="add-member-btn" class="btn-primary">+ Add Family Member</button>
+            <button id="add-member-btn" class="btn-primary">+ Add Member</button>
             <button id="suggest-update-btn" class="btn-secondary">📢 Suggest an Update</button>
+            <button id="toolbar-more-toggle" class="btn-secondary toolbar-more-toggle-btn">⋯ More</button>
+        </div>
+        <div class="tree-toolbar toolbar-secondary" id="toolbar-secondary">
+            <button id="expand-collapse-toggle-btn" class="btn-secondary" title="Expand all branches">⊞ All</button>
+            <select id="pdf-root-select" class="search-input" style="flex:1 1 220px;"></select>
+            <button id="pdf-btn" class="btn-secondary">📄 Download PDF</button>
+            <button id="changelog-btn" class="btn-secondary">🕘 What's New</button>
+            <button id="health-check-btn" class="btn-secondary">🩺 Health Check</button>
         </div>
         <div id="search-result-count" class="search-result-count" style="display:none;"></div>
         <div id="stats-bar" class="stats-bar"></div>
@@ -444,55 +591,64 @@
                 <select id="rf-person-a"></select>
                 <span class="rf-and">&amp;</span>
                 <select id="rf-person-b"></select>
-                <button id="rf-find-btn" class="btn-secondary">Find Relation</button>
+                <button id="rf-find-btn" class="btn-secondary">Find</button>
             </div>
             <div id="rf-result" class="rf-result"></div>
         </div>
 
         <div class="ancestors-panel">
-            <div class="ancestors-label">EARLIER GENERATIONS</div>
             <div id="ancestors-root"></div>
         </div>
 
         <div id="tree-root"></div>
     </div>
 
-    <!-- MIDDLE: 25% WIDTH — CELEBRATIONS -->
-    <div class="celeb-column">
-        <div class="column-controls">
-            <select id="month-selector" class="month-dropdown">
-                <option value="Jan">January</option>
-                <option value="Feb">February</option>
-                <option value="Mar">March</option>
-                <option value="Apr">April</option>
-                <option value="May">May</option>
-                <option value="Jun">June</option>
-                <option value="Jul">July</option>
-                <option value="Aug">August</option>
-                <option value="Sep">September</option>
-                <option value="Oct">October</option>
-                <option value="Nov">November</option>
-                <option value="Dec">December</option>
-            </select>
-            <button id="sync-btn" class="sync-btn">🗓️ Sync to Phone</button>
+    <!-- RIGHT: 40% WIDTH — DASHBOARD (controls, upcoming, celebrations + remembrance) -->
+    <div class="digest-region">
+
+        <div class="digest-controls-card">
+            <div class="column-controls">
+                <select id="month-selector" class="month-dropdown">
+                    <option value="Jan">January</option>
+                    <option value="Feb">February</option>
+                    <option value="Mar">March</option>
+                    <option value="Apr">April</option>
+                    <option value="May">May</option>
+                    <option value="Jun">June</option>
+                    <option value="Jul">July</option>
+                    <option value="Aug">August</option>
+                    <option value="Sep">September</option>
+                    <option value="Oct">October</option>
+                    <option value="Nov">November</option>
+                    <option value="Dec">December</option>
+                </select>
+                <button id="sync-btn" class="sync-btn">🗓️ Sync to Phone</button>
+                <button id="digest-btn" class="sync-btn" style="background:#0369a1;">📱 WhatsApp Digest</button>
+            </div>
         </div>
 
-        <div id="upcoming-box" class="upcoming-box">
-            <h4>🔔 Upcoming in the next 30 days</h4>
-            <div id="upcoming-list"></div>
+        <div class="digest-controls-card">
+            <div id="upcoming-box" class="upcoming-box" style="margin-bottom:0;">
+                <h4>🔔 Upcoming in the next 30 days</h4>
+                <div id="upcoming-list"></div>
+            </div>
         </div>
 
-        <h3 id="current-month-title">Celebrations</h3>
-        <div id="events-list"></div>
-    </div>
+        <div class="digest-split-row">
+            <div class="celeb-column">
+                <h3 id="current-month-title">Celebrations</h3>
+                <div id="events-list"></div>
+            </div>
 
-    <!-- RIGHT: 25% WIDTH — REMEMBRANCES & TITHIS -->
-    <div class="rememb-column">
-        <h3 id="remembrance-month-title" class="remembrance-header">Monthly Remembrances</h3>
-        <div id="remembrance-list"></div>
+            <div class="rememb-column">
+                <h3 id="remembrance-month-title" class="remembrance-header">Monthly Remembrances</h3>
+                <div id="remembrance-list"></div>
 
-        <h3 class="remembrance-header" style="margin-top: 30px;">Tithi Remembrances (All)</h3>
-        <div id="tithi-list"></div>
+                <h3 class="remembrance-header" style="margin-top: 30px;">Tithi Remembrances (All)</h3>
+                <div id="tithi-list"></div>
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -648,9 +804,30 @@
     </div>
 </div>
 
+<!-- ===================== Changelog modal ===================== -->
+<div id="changelog-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <button class="modal-close" data-close-modal="changelog-modal">&times;</button>
+        <h3>What's New</h3>
+        <div id="changelog-list"></div>
+    </div>
+</div>
+
+<!-- ===================== Health Check modal ===================== -->
+<div id="health-check-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:600px;">
+        <button class="modal-close" data-close-modal="health-check-modal">&times;</button>
+        <h3>Health Check</h3>
+        <div class="form-hint" style="margin-bottom:14px;">
+            Gaps in the family tree's data. Use "Nudge" to open WhatsApp with a pre-filled message — you pick who to send it to, no phone numbers are stored on the site. "Nudge" only appears for people without a death record on file, but please use your own judgment — it can't fully tell who's actually reachable.
+        </div>
+        <div id="health-check-list"></div>
+    </div>
+</div>
+
 
 <script id="family-data-script">
-const FAMILY_DATA = [{"kind":"single","id":"branch-surajmalji-jaju","relation":"Root","displayName":"Surajmalji Jaju","isRoot":true,"defaultOpen":true,"people":[{"name":"Surajmalji","avatar":"surajmalji.jpeg","dob":null,"dod":null,"gender":"male","fullName":"Surajmalji Jaju"}],"anniversary":null,"children":[{"kind":"single","id":"branch-raghunathji-jaju","relation":"Son","displayName":"Raghunathji Jaju","isRoot":false,"defaultOpen":true,"people":[{"name":"Raghunathji","avatar":"raghunathji.jpeg","dob":null,"dod":null,"gender":"male","fullName":"Raghunathji Jaju"}],"anniversary":null,"children":[{"kind":"couple","id":"branch-kesar-bai-mangniram-jaju","relation":"Son","displayName":"Kesar Bai & Mangniram Jaju","isRoot":false,"defaultOpen":true,"people":[{"name":"Kesar Bai","avatar":"kesar_bai.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Ekam","rank":1},"isPlaceholder":false},"gender":"female","fullName":"Kesar Bai Jaju"},{"name":"Mangniram","avatar":"mangniram.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Ekadashi","rank":11},"isPlaceholder":false},"gender":"male","fullName":"Mangniram Jaju"}],"anniversary":null,"children":[{"kind":"couple","id":"branch-badrinarayan-jaju-geeta-devi-jaju","relation":"Son","displayName":"Geeta Devi & Badrinarayan Jaju","isRoot":false,"defaultOpen":true,"people":[{"name":"Geeta Devi","avatar":"geeta_devi.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"female","fullName":"Geeta Devi"},{"name":"Badrinarayan","avatar":"badrinarayan.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Shashthi","rank":6},"isPlaceholder":false},"gender":"male","fullName":"Badrinarayan Jaju"}],"anniversary":null,"children":[{"kind":"couple","id":"branch-ramnarayan-leela","relation":"Son","displayName":"Leela & Ramnarayan Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Leela","avatar":"leela_jaju.jpeg","dob":null,"dod":{"date":{"display":"07 Nov","month":11,"day":7},"tithi":{"name":"Shashthi","rank":6},"isPlaceholder":false},"gender":"female","fullName":"Leela Jaju"},{"name":"Ramnarayan","avatar":"ramnarayan.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Chaturthi","rank":4},"isPlaceholder":false},"gender":"male","fullName":"Ramnarayan Jaju"}],"anniversary":{"date":{"display":"05 Nov","month":11,"day":5},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-rita-shamsundar","relation":"Daughter","displayName":"Rita & Shamsundar Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Rita","avatar":"rita.jpeg","dob":null,"dod":{"date":{"display":"02 Nov","month":11,"day":2},"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"female","fullName":"Rita Dalya"},{"name":"Shamsundar","avatar":"shamsundar.jpeg","dob":null,"dod":{"date":{"display":"19 Mar","month":3,"day":19},"tithi":{"name":"Ekam","rank":1},"isPlaceholder":false},"gender":"male","fullName":"Shamsundar Dalya"}],"anniversary":{"date":{"display":"06 Dec","month":12,"day":6,"year":1976},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-vinod-manju","relation":"Son","displayName":"Manju & Vinod Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Manju","avatar":"manju_vinod.jpeg","dob":{"date":{"display":"27 Oct","month":10,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Manju Dalya"},{"name":"Vinod","avatar":"vinod.jpeg","dob":{"date":{"display":"11 Dec","month":12,"day":11},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Vinod Dalya"}],"anniversary":{"date":{"display":"28 Jun","month":6,"day":28},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-khushal","relation":"Son","displayName":"Khushal Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Khushal","avatar":"kushal.jpeg","dob":{"date":{"display":"17 Mar","month":3,"day":17},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Khushal Dalya"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-lakshita","relation":"Daughter","displayName":"Lakshita Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Lakshita","avatar":"lakshita.jpeg","dob":{"date":{"display":"31 May","month":5,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Lakshita Dalya"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-harinarayan-sangeeta","relation":"Son","displayName":"Sangeeta & Harinarayan Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sangeeta","avatar":"sangita_hari.jpeg","dob":{"date":{"display":"10 Dec","month":12,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sangeeta Jaju"},{"name":"Harinarayan","avatar":"harinarayan.jpeg","dob":{"date":{"display":"06 Oct","month":10,"day":6},"tithi":null,"isPlaceholder":false},"dod":{"date":{"display":"06 Oct","month":10,"day":6},"tithi":{"name":"Chaturthi","rank":4},"isPlaceholder":false},"gender":"male","fullName":"Harinarayan Jaju"}],"anniversary":{"date":{"display":"08 Dec","month":12,"day":8,"year":1988},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-shravan-aakanksha","relation":"Son","displayName":"Aakanksha & Shravan","isRoot":false,"defaultOpen":false,"people":[{"name":"Aakanksha","avatar":"aakanksha.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Aakanksha Jaju"},{"name":"Shravan","avatar":"shravan.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Shravan Jaju"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[{"kind":"leaf","id":"branch-advika","relation":"Daughter","displayName":"Advika Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Advika","avatar":"advika.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Advika Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-preeti-pratik","relation":"Daughter","displayName":"Preeti & Pratik","isRoot":false,"defaultOpen":false,"people":[{"name":"Preeti","avatar":"preeti.jpeg","dob":{"date":{"display":"17 Dec","month":12,"day":17},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Preeti Jaju"},{"name":"Pratik","avatar":"pratik_preeti.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Pratik Jaju"}],"anniversary":{"date":{"display":"20 Jun","month":6,"day":20},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-yug","relation":"Son","displayName":"Yug Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Yug","avatar":"yug.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Yug Jaju"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-avira-p","relation":"Daughter","displayName":"Avira Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Avira","avatar":"avira_preeti.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Avira Jaju"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-sunita-nandkishor","relation":"Daughter","displayName":"Sunita & Nandkishor Pungliya","isRoot":false,"defaultOpen":false,"people":[{"name":"Sunita","avatar":"sunita.jpeg","dob":{"date":{"display":"01 Apr","month":4,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sunita Pungliya"},{"name":"Nandkishor","avatar":"nandkishor_p.jpeg","dob":{"date":{"display":"21 May","month":5,"day":21},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Nandkishor Pungliya"}],"anniversary":{"date":{"display":"09 Feb","month":2,"day":9,"year":1980},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-mrunal-nitesh","relation":"Daughter","displayName":"Mrunal & Nitesh Mandhane","isRoot":false,"defaultOpen":false,"people":[{"name":"Mrunal","avatar":"mrunal.jpeg","dob":{"date":{"display":"29 Jul","month":7,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Mrunal Mandhane"},{"name":"Nitesh","avatar":"nitesh.jpeg","dob":{"date":{"display":"28 Feb","month":2,"day":28},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Nitesh Mandhane"}],"anniversary":{"date":{"display":"25 Jan","month":1,"day":25},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-aadya","relation":"Daughter","displayName":"Aadya Mandhane","isRoot":false,"defaultOpen":false,"people":[{"name":"Aadya","avatar":"aadya.jpeg","dob":{"date":{"display":"10 Apr","month":4,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Aadya Mandhane"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-megha-rahul","relation":"Daughter","displayName":"Megha & Rahul Nahar","isRoot":false,"defaultOpen":false,"people":[{"name":"Megha","avatar":"megha_nahar.jpeg","dob":{"date":{"display":"27 Jun","month":6,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Megha Nahar"},{"name":"Rahul","avatar":"rahul.jpeg","dob":{"date":{"display":"03 Apr","month":4,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rahul Nahar"}],"anniversary":{"date":{"display":"26 Dec","month":12,"day":26},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-aatman","relation":"Son","displayName":"Aatman Nahar","isRoot":false,"defaultOpen":false,"people":[{"name":"Aatman","avatar":"aatman.jpeg","dob":{"date":{"display":"04 May","month":5,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Aatman Nahar"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-dhara-atul","relation":"Daughter","displayName":"Dhara & Atul Malpani","isRoot":false,"defaultOpen":false,"people":[{"name":"Dhara","avatar":"dhara.jpeg","dob":{"date":{"display":"28 Oct","month":10,"day":28},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Dhara Malpani"},{"name":"Atul","avatar":"atul_malpani.jpeg","dob":{"date":{"display":"24 Mar","month":3,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Atul Malpani"}],"anniversary":{"date":{"display":"29 Apr","month":4,"day":29},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-dhairya","relation":"Son","displayName":"Dhairya Malpani","isRoot":false,"defaultOpen":false,"people":[{"name":"Dhairya","avatar":"dhairya.jpeg","dob":{"date":{"display":"29 Nov","month":11,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Dhairya Malpani"}],"anniversary":null,"children":[]}]}]},{"kind":"leaf","id":"branch-jugalkishor","relation":"Son","displayName":"Jugalkishor Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Jugalkishor","avatar":"jugalkishore.jpeg","dob":{"date":{"display":"10 May","month":5,"day":10,"year":2010},"tithi":null,"isPlaceholder":false},"dod":{"date":{"display":"10 May","month":5,"day":10},"tithi":{"name":"Panchami","rank":5},"isPlaceholder":false},"gender":"male","fullName":"Jugalkishor Jaju"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-sangeeta-ramdhan","relation":"Daughter","displayName":"Sangeeta & Ramdhan Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Sangeeta","avatar":"sangeeta_boob.jpeg","dob":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sangeeta Boob"},{"name":"Ramdhan","avatar":"ramdhan.jpeg","dob":{"date":{"display":"02 Feb","month":2,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Ramdhan Boob"}],"anniversary":{"date":{"display":"27 Nov","month":11,"day":27},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sachin-devashree","relation":"Son","displayName":"Devashree & Sachin","isRoot":false,"defaultOpen":false,"people":[{"name":"Devashree","avatar":"devashree.jpeg","dob":{"date":{"display":"11 Sep","month":9,"day":11},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Devashree Boob"},{"name":"Sachin","avatar":"sachin.jpeg","dob":{"date":{"display":"04 Apr","month":4,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sachin Boob"}],"anniversary":{"date":{"display":"13 Jul","month":7,"day":13},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-agastya","relation":"Son","displayName":"Agastya Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Agastya","avatar":"agastya.jpeg","dob":{"date":{"display":"18 May","month":5,"day":18},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Agastya Boob"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-sattviki","relation":"Daughter","displayName":"Sattviki Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Sattviki","avatar":"sattviki.jpeg","dob":{"date":{"display":"27 Jul","month":7,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sattviki Boob"}],"anniversary":null,"children":[]}]},{"kind":"leaf","id":"branch-surabhi","relation":"Daughter","displayName":"Surabhi Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Surabhi","avatar":"surabhi.jpeg","dob":{"date":{"display":"06 Nov","month":11,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Surabhi Boob"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-lunkaran-sonali","relation":"Son","displayName":"Sonali & Lunkaran Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sonali","avatar":"sonali.jpeg","dob":null,"dod":{"date":{"display":"17 Jan","month":1,"day":17},"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"female","fullName":"Sonali Jaju"},{"name":"Lunkaran","avatar":"lunkaran.jpeg","dob":{"date":{"display":"01 Mar","month":3,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Lunkaran Jaju"}],"anniversary":{"date":{"display":"25 Jun","month":6,"day":25,"year":1975},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-anand-sweta","relation":"Son","displayName":"Sweta & Anand Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sweta","avatar":"sweta.jpeg","dob":{"date":{"display":"21 Jun","month":6,"day":21},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sweta Jaju"},{"name":"Anand","avatar":"anand.jpeg","dob":{"date":{"display":"12 Sep","month":9,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Anand Jaju"}],"anniversary":{"date":{"display":"15 Jan","month":1,"day":15},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-aarush","relation":"Son","displayName":"Aarush Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Aarush","avatar":"aarush.jpeg","dob":{"date":{"display":"23 Oct","month":10,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Aarush Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-amruta-atul","relation":"Daughter","displayName":"Amruta & Atul Rathod","isRoot":false,"defaultOpen":false,"people":[{"name":"Amruta","avatar":"amruta.jpeg","dob":{"date":{"display":"13 Feb","month":2,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Amruta Rathod"},{"name":"Atul","avatar":"atul_rathod.jpeg","dob":{"date":{"display":"08 Sep","month":9,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Atul Rathod"}],"anniversary":{"date":{"display":"25 Jul","month":7,"day":25},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-akshara","relation":"Daughter","displayName":"Akshara Rathod","isRoot":false,"defaultOpen":false,"people":[{"name":"Akshara","avatar":"akshara.jpeg","dob":{"date":{"display":"02 Dec","month":12,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Akshara Rathod"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-anushka","relation":"Daughter","displayName":"Anushka Rathod","isRoot":false,"defaultOpen":false,"people":[{"name":"Anushka","avatar":"anushka.jpeg","dob":{"date":{"display":"18 Jan","month":1,"day":18},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Anushka Rathod"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-aarti-narendra","relation":"Daughter","displayName":"Aarti & Narendra Jadhav","isRoot":false,"defaultOpen":false,"people":[{"name":"Aarti","avatar":"aarti.jpeg","dob":{"date":{"display":"13 Apr","month":4,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Aarti Jadhav"},{"name":"Narendra","avatar":"narendra.jpeg","dob":{"date":{"display":"27 Dec","month":12,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Narendra Jadhav"}],"anniversary":{"date":{"display":"26 Feb","month":2,"day":26},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-atharva","relation":"Son","displayName":"Atharva Jadhav","isRoot":false,"defaultOpen":false,"people":[{"name":"Atharva","avatar":"atharva.jpeg","dob":{"date":{"display":"24 Jun","month":6,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Atharva Jadhav"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-kaluram-sushila","relation":"Son","displayName":"Sushila & Kaluram Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sushila","avatar":"sushila.jpeg","dob":{"date":{"display":"10 Dec","month":12,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sushila Jaju"},{"name":"Kaluram","avatar":"kaluram_traditional_portrait.jpeg","dob":null,"dod":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":{"name":"Ekadashi","rank":11},"isPlaceholder":false},"gender":"male","fullName":"Kaluram Jaju"}],"anniversary":{"date":{"display":"17 Apr","month":4,"day":17,"year":1978},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-kavita-aashish","relation":"Daughter","displayName":"Kavita & Aashish Dhoot","isRoot":false,"defaultOpen":false,"people":[{"name":"Kavita","avatar":"kavita.jpeg","dob":{"date":{"display":"08 May","month":5,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Kavita Dhoot"},{"name":"Aashish","avatar":"aashish.jpeg","dob":{"date":{"display":"06 Oct","month":10,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Aashish Dhoot"}],"anniversary":{"date":{"display":"09 Jul","month":7,"day":9},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-parth","relation":"Son","displayName":"Parth Dhoot","isRoot":false,"defaultOpen":false,"people":[{"name":"Parth","avatar":"parth.jpeg","dob":{"date":{"display":"23 Sep","month":9,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Parth Dhoot"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-kavya","relation":"Son","displayName":"Kavya Dhoot","isRoot":false,"defaultOpen":false,"people":[{"name":"Kavya","avatar":"kavya.jpeg","dob":{"date":{"display":"03 Jun","month":6,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kavya Dhoot"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-kapil-bharti","relation":"Son","displayName":"Bharti & Kapil Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Bharti","avatar":"bharti.jpeg","dob":{"date":{"display":"13 Feb","month":2,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Bharti Jaju"},{"name":"Kapil","avatar":"kapil.jpeg","dob":{"date":{"display":"12 May","month":5,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kapil Jaju"}],"anniversary":{"date":{"display":"08 Dec","month":12,"day":8},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-likhit","relation":"Son","displayName":"Likhit Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Likhit","avatar":"likhit.jpeg","dob":{"date":{"display":"19 Dec","month":12,"day":19},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Likhit Jaju"}],"anniversary":null,"children":[]}]},{"kind":"leaf","id":"branch-karuna","relation":"Daughter","displayName":"Karuna Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Karuna","avatar":"karuna.jpeg","dob":{"date":{"display":"10 Sep","month":9,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Karuna Jaju"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-kasturi-parag","relation":"Daughter","displayName":"Kasturi & Parag Mantri","isRoot":false,"defaultOpen":false,"people":[{"name":"Kasturi","avatar":"kasturi.jpeg","dob":{"date":{"display":"24 Mar","month":3,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Kasturi Mantri"},{"name":"Parag","avatar":"parag.jpeg","dob":{"date":{"display":"10 Aug","month":8,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Parag Mantri"}],"anniversary":{"date":{"display":"11 Nov","month":11,"day":11},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-bhowmik","relation":"Son","displayName":"Bhowmik Mantri","isRoot":false,"defaultOpen":false,"people":[{"name":"Bhowmik","avatar":"bhowmik.jpeg","dob":{"date":{"display":"08 Feb","month":2,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Bhowmik Mantri"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-devanshi","relation":"Daughter","displayName":"Devanshi Mantri","isRoot":false,"defaultOpen":false,"people":[{"name":"Devanshi","avatar":"devanshi.jpeg","dob":{"date":{"display":"05 Jul","month":7,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Devanshi Mantri"}],"anniversary":null,"children":[]}]}]},{"kind":"single","id":"branch-madanlal","relation":"Son","displayName":"Madanlal Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Madanlal","avatar":"madanlal.jpeg","dob":null,"dod":{"date":{"display":"24 Mar","month":3,"day":24,"year":1999},"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"male","fullName":"Madanlal Jaju"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-ramkishore-urmila","relation":"Son","displayName":"Urmila & Ramkishore Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Urmila","avatar":"urmila.jpeg","dob":null,"dod":{"date":{"display":"28 Feb","month":2,"day":28},"tithi":{"name":"Trayodashi","rank":13},"isPlaceholder":false},"gender":"female","fullName":"Urmila Jaju"},{"name":"Ramkishore","avatar":"ramkishore.jpeg","dob":{"date":{"display":"03 May","month":5,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Ramkishore Jaju"}],"anniversary":{"date":{"display":"02 Jul","month":7,"day":2},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-pavan-raksha","relation":"Son","displayName":"Raksha & Pavan Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Raksha","avatar":"raksha.jpeg","dob":{"date":{"display":"13 Sep","month":9,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Raksha Jaju"},{"name":"Pavan","avatar":"pavan.jpeg","dob":{"date":{"display":"03 Feb","month":2,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Pavan Jaju"}],"anniversary":{"date":{"display":"02 Jul","month":7,"day":2},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-viresha","relation":"Daughter","displayName":"Viresha Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Viresha","avatar":"viresha.jpeg","dob":{"date":{"display":"09 Apr","month":4,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Viresha Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-pournima-abhishek","relation":"Daughter","displayName":"Pournima & Abhishek Nagarkar","isRoot":false,"defaultOpen":false,"people":[{"name":"Pournima","avatar":"pournima.jpeg","dob":{"date":{"display":"04 Apr","month":4,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pournima Nagarkar"},{"name":"Abhishek","avatar":"abhishek.jpeg","dob":{"date":{"display":"05 Jun","month":6,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Abhishek Nagarkar"}],"anniversary":{"date":{"display":"07 Dec","month":12,"day":7},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-arnav","relation":"Son","displayName":"Arnav Nagarkar","isRoot":false,"defaultOpen":false,"people":[{"name":"Arnav","avatar":"arnav.jpeg","dob":{"date":{"display":"09 Oct","month":10,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Arnav Nagarkar"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-kamalkishore-manju","relation":"Son","displayName":"Manju & Kamalkishore Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Manju","avatar":"manju_jaju.jpeg","dob":{"date":{"display":"15 Aug","month":8,"day":15,"year":1975},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Manju Jaju"},{"name":"Kamalkishore","avatar":"kamalkishore.jpeg","dob":{"date":{"display":"04 Jul","month":7,"day":4,"year":1967},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kamalkishore Jaju"}],"anniversary":{"date":{"display":"07 Mar","month":3,"day":7,"year":1991},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-divyani-kamal","relation":"Daughter","displayName":"Divyani & Kamal Gandhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Divyani","avatar":"divyani.jpeg","dob":{"date":{"display":"17 Apr","month":4,"day":17},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Divyani Gandhi"},{"name":"Kamal","avatar":"kamal.jpeg","dob":{"date":{"display":"01 Jan","month":1,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kamal Gandhi"}],"anniversary":{"date":{"display":"08 Mar","month":3,"day":8},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-himani","relation":"Daughter","displayName":"Himani Gandhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Himani","avatar":"himani.jpeg","dob":{"date":{"display":"12 Jan","month":1,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Himani Gandhi"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-sanvi","relation":"Daughter","displayName":"Sanvi Gandhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Sanvi","avatar":"sanvi.jpeg","dob":{"date":{"display":"22 Nov","month":11,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sanvi Gandhi"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-gaurav-megha","relation":"Son","displayName":"Megha & Gaurav Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Megha","avatar":"megha_g.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Megha Jaju"},{"name":"Gaurav","avatar":"gaurav.jpeg","dob":{"date":{"display":"16 Feb","month":2,"day":16},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Gaurav Jaju"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[]}]},{"kind":"couple","id":"branch-harkudevi-mohanlal","relation":"Daughter","displayName":"Harkudevi & Mohanlal Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Harkudevi","avatar":"harkudevi.jpeg","dob":null,"dod":{"date":{"display":"29 Mar","month":3,"day":29,"year":2020},"tithi":{"name":"Panchami","rank":5},"isPlaceholder":false},"gender":"female","fullName":"Harkudevi Harkut"},{"name":"Mohanlal Harkut","avatar":"mohanlal_harkut.jpeg","dob":{"date":{"display":"05 Jun","month":6,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Mohanlal Harkut"}],"anniversary":{"date":{"display":"15 Mar","month":3,"day":15},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-laduram-pushpa","relation":"Son","displayName":"Pushpa & Laduram Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Pushpa","avatar":"pushpa.jpeg","dob":{"date":{"display":"22 Jul","month":7,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pushpa Harkut"},{"name":"Laduram","avatar":"laduram.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Laduram Harkut"}],"anniversary":{"date":{"display":"02 May","month":5,"day":2},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-punit-deeksha","relation":"Son","displayName":"Deeksha & Punit","isRoot":false,"defaultOpen":false,"people":[{"name":"Deeksha","avatar":"deeksha.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Deeksha Harkut"},{"name":"Punit","avatar":"punit.jpeg","dob":{"date":{"display":"21 Dec","month":12,"day":21},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Punit Harkut"}],"anniversary":{"date":{"display":"31 May","month":5,"day":31},"isPlaceholder":false},"children":[]},{"kind":"leaf","id":"branch-lehari","relation":"Daughter","displayName":"Lehari Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Lehari","avatar":"lehari.jpeg","dob":{"date":{"display":"04 Jan","month":1,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Lehari Harkut"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-pooja-ajay","relation":"Daughter","displayName":"Pooja & Ajay Charkha","isRoot":false,"defaultOpen":false,"people":[{"name":"Pooja","avatar":"pooja.jpeg","dob":{"date":{"display":"14 Dec","month":12,"day":14},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pooja Charkha"},{"name":"Ajay","avatar":"ajay.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Ajay Charkha"}],"anniversary":{"date":{"display":"16 Feb","month":2,"day":16},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-yashvi","relation":"Daughter","displayName":"Yashvi Charkha","isRoot":false,"defaultOpen":false,"people":[{"name":"Yashvi","avatar":"yashvi.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Yashvi Charkha"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-charu","relation":"Daughter","displayName":"Charu Charkha","isRoot":false,"defaultOpen":false,"people":[{"name":"Charu","avatar":"charu.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Charu Charkha"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-nandkishor-pavitra","relation":"Son","displayName":"Pavitra & Nandkishor Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Pavitra","avatar":"pavitra.jpeg","dob":{"date":{"display":"25 Aug","month":8,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pavitra Harkut"},{"name":"Nandkishor","avatar":"nandkishor_h.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Nandkishor Harkut"}],"anniversary":{"date":{"display":"04 Feb","month":2,"day":4},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-harshal-aruna","relation":"Son","displayName":"Aruna & Harshal","isRoot":false,"defaultOpen":false,"people":[{"name":"Aruna","avatar":"aruna.jpeg","dob":{"date":{"display":"06 Aug","month":8,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Aruna Harkut"},{"name":"Harshal","avatar":"harshal.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Harshal Harkut"}],"anniversary":{"date":{"display":"28 Jun","month":6,"day":28},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-lavya","relation":"Son","displayName":"Lavya Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Lavya","avatar":"lavya.jpeg","dob":{"date":{"display":"30 Mar","month":3,"day":30},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Lavya Harkut"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-divit","relation":"Son","displayName":"Divit Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Divit","avatar":"divit.jpeg","dob":{"date":{"display":"02 Jul","month":7,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Divit Harkut"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-lakshit-shivani","relation":"Son","displayName":"Shivani & Lakshit","isRoot":false,"defaultOpen":false,"people":[{"name":"Shivani","avatar":"shivani.jpeg","dob":{"date":{"display":"03 Feb","month":2,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shivani Harkut"},{"name":"Lakshit","avatar":"lakshit_h.jpeg","dob":{"date":{"display":"23 Jun","month":6,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Lakshit Harkut"}],"anniversary":{"date":{"display":"09 Dec","month":12,"day":9},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-krida","relation":"Daughter","displayName":"Krida Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Krida","avatar":"krida.jpeg","dob":{"date":{"display":"23 Dec","month":12,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Krida Harkut"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-amarchand-ramkanya","relation":"Son","displayName":"Ramkanya & Amarchand Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Ramkanya","avatar":"ramkanya.jpeg","dob":{"date":{"display":"16 Aug","month":8,"day":16},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Ramkanya Harkut"},{"name":"Amarchand","avatar":"amarchand.jpeg","dob":{"date":{"display":"06 Jul","month":7,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Amarchand Harkut"}],"anniversary":{"date":{"display":"19 Apr","month":4,"day":19},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sudarshan-prerna","relation":"Son","displayName":"Prerna & Sudarshan","isRoot":false,"defaultOpen":false,"people":[{"name":"Prerna","avatar":"prerna.jpeg","dob":{"date":{"display":"29 Jun","month":6,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Prerna Harkut"},{"name":"Sudarshan","avatar":"sudarshan.jpeg","dob":{"date":{"display":"08 Mar","month":3,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sudarshan Harkut"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[]},{"kind":"leaf","id":"branch-darshit","relation":"Son","displayName":"Darshit Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Darshit","avatar":"darshit.jpeg","dob":{"date":{"display":"24 Oct","month":10,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Darshit Harkut"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-madhusudhan-shobha","relation":"Daughter","displayName":"Shobha & Madhududhan Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Shobha","avatar":"shobha.jpeg","dob":{"date":{"display":"26 Nov","month":11,"day":26},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shobha Laddha"},{"name":"Madhududhan","avatar":"madhusudhan.jpeg","dob":{"date":{"display":"24 Apr","month":4,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Madhududhan Laddha"}],"anniversary":{"date":{"display":"05 Mar","month":3,"day":5},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-prafful-manisha","relation":"Son","displayName":"Manisha & Prafful Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Manisha","avatar":"manisha_l.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Manisha Laddha"},{"name":"Prafful","avatar":"prafful.jpeg","dob":{"date":{"display":"30 May","month":5,"day":30},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Prafful Laddha"}],"anniversary":{"date":{"display":"29 Nov","month":11,"day":29},"isPlaceholder":false},"children":[]},{"kind":"couple","id":"branch-sanjeet-pallavi","relation":"Daughter","displayName":"Pallavi & Sanjeet Patwa","isRoot":false,"defaultOpen":false,"people":[{"name":"Pallavi","avatar":"pallavi.jpeg","dob":{"date":{"display":"10 May","month":5,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pallavi Patwa"},{"name":"Sanjeet","avatar":"sanjeet.jpeg","dob":{"date":{"display":"29 Jun","month":6,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sanjeet Patwa"}],"anniversary":{"date":{"display":"01 Nov","month":11,"day":1},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-mahesh-sangeeta","relation":"Daughter","displayName":"Sangeeta & Mahesh Soni","isRoot":false,"defaultOpen":false,"people":[{"name":"Sangeeta","avatar":"sangeeta_soni.jpeg","gender":"female","dob":{"date":{"display":"15 Aug","month":8,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"fullName":"Sangeeta Soni"},{"name":"Mahesh","avatar":"mahesh_soni.jpeg","gender":"male","dob":{"date":{"display":"20 Feb","month":2,"day":20},"tithi":null,"isPlaceholder":false},"dod":null,"fullName":"Mahesh Soni"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-aman-megha","relation":"Daughter","displayName":"Megha & Aman Jain","isRoot":false,"defaultOpen":false,"people":[{"name":"Megha","avatar":"megha_jain.jpeg","gender":"female","dob":{"date":{"display":"16 Feb","month":2,"day":16},"tithi":null,"isPlaceholder":false},"dod":null,"fullName":"Megha Jain"},{"name":"Aman","avatar":"aman_jain.jpeg","gender":"male","dob":null,"dod":null,"fullName":"Aman Jain"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-tarun-shreya","relation":"Daughter","displayName":"Shreya & Tarun","isRoot":false,"defaultOpen":false,"people":[{"name":"Shreya","avatar":"shreya_tarun.jpeg","gender":"female","dob":null,"dod":null,"fullName":"Shreya"},{"name":"Tarun","avatar":"tarun.jpeg","gender":"male","dob":null,"dod":null,"fullName":"Tarun"}],"anniversary":null,"children":[]}]}]}]},{"kind":"couple","id":"branch-saraswati-mohanlal","relation":"Daughter","displayName":"Saraswati & Mohanlal Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Saraswati","avatar":"saraswati.jpeg","dob":{"date":{"display":"19 Aug","month":8,"day":19,"year":1941},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Saraswati Mundada"},{"name":"Mohanlal Mundada","avatar":"mohanlal_mundada.jpeg","dob":null,"dod":{"date":{"display":"23 Dec","month":12,"day":23},"tithi":{"name":"Navami","rank":9},"isPlaceholder":false},"gender":"male","fullName":"Mohanlal Mundada"}],"anniversary":{"date":{"display":"21 Feb","month":2,"day":21,"year":1958},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-shrikant-ujjwala","relation":"Son","displayName":"Ujjwala & Shrikant Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Ujjwala","avatar":"ujjwala.jpeg","dob":{"date":{"display":"02 Nov","month":11,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Ujjwala Mundada"},{"name":"Shrikant","avatar":"shrikant.jpeg","dob":{"date":{"display":"07 May","month":5,"day":7,"year":1970},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Shrikant Mundada"}],"anniversary":{"date":{"display":"27 Apr","month":4,"day":27},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-pratik-trupti","relation":"Son","displayName":"Trupti & Pratik","isRoot":false,"defaultOpen":false,"people":[{"name":"Trupti","avatar":"trupti_p.jpeg","dob":{"date":{"display":"01 Dec","month":12,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Trupti Mundada"},{"name":"Pratik","avatar":"pratik.jpeg","dob":{"date":{"display":"03 Dec","month":12,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Pratik Mundada"}],"anniversary":{"date":{"display":"26 Jun","month":6,"day":26},"isPlaceholder":false},"children":[]},{"kind":"leaf","id":"branch-pratiksha","relation":"Daughter","displayName":"Pratiksha Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Pratiksha","avatar":"pratiksha.jpeg","dob":{"date":{"display":"24 Mar","month":3,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pratiksha Mundada"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-prakash-savita","relation":"Son","displayName":"Savita & Prakash Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Savita","avatar":"savita.jpeg","dob":{"date":{"display":"24 Jul","month":7,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Savita Mundada"},{"name":"Prakash","avatar":"prakash.jpeg","dob":{"date":{"display":"06 Oct","month":10,"day":6,"year":1972},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Prakash Mundada"}],"anniversary":{"date":{"display":"26 Jan","month":1,"day":26},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-yogesh-divya","relation":"Daughter","displayName":"Divya & Yogesh Bhattad","isRoot":false,"defaultOpen":false,"people":[{"name":"Divya","avatar":"divya.jpeg","dob":{"date":{"display":"31 May","month":5,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Divya Bhattad"},{"name":"Yogesh","avatar":"yogesh.jpeg","dob":{"date":{"display":"09 Mar","month":3,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Yogesh Bhattad"}],"anniversary":{"date":{"display":"29 Jun","month":6,"day":29},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-kashvi","relation":"Daughter","displayName":"Kashvi Bhattad","isRoot":false,"defaultOpen":false,"people":[{"name":"Kashvi","avatar":"kashvi.jpeg","dob":{"date":{"display":"15 Oct","month":10,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Kashvi Bhattad"}],"anniversary":null,"children":[]}]},{"kind":"leaf","id":"branch-shreya","relation":"Daughter","displayName":"Shreya Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Shreya","avatar":"shreya.jpeg","dob":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shreya Mundada"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-bankatlal-lata","relation":"Son","displayName":"Lata & Bankatlal Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Lata","avatar":"lata.jpeg","dob":{"date":{"display":"31 Oct","month":10,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Lata Mundada"},{"name":"Bankatlal","avatar":"bankatlal.jpeg","dob":{"date":{"display":"07 Jul","month":7,"day":7,"year":1975},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Bankatlal Mundada"}],"anniversary":{"date":{"display":"11 Dec","month":12,"day":11},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-bhavik-piyusha","relation":"Daughter","displayName":"Piyusha & Bhavik","isRoot":false,"defaultOpen":false,"people":[{"name":"Piyusha","avatar":"piyusha.jpeg","dob":{"date":{"display":"27 Sep","month":9,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Piyusha"},{"name":"Bhavik","avatar":"bhavik.jpeg","dob":{"date":{"display":"12 Oct","month":10,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Bhavik"}],"anniversary":{"date":{"display":"20 Jul","month":7,"day":20},"isPlaceholder":false},"children":[]},{"kind":"leaf","id":"branch-isha","relation":"Daughter","displayName":"Isha Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Isha","avatar":"eesha.jpeg","dob":{"date":{"display":"25 Mar","month":3,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Isha Mundada"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-rameshwar-manta","relation":"Daughter","displayName":"Manta & Rameshwar Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Manta","avatar":"manta.jpeg","dob":{"date":{"display":"15 Nov","month":11,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Manta Sarda"},{"name":"Rameshwar","avatar":"rameshwar.jpeg","dob":null,"dod":{"date":{"display":"13 Oct","month":10,"day":13},"tithi":{"name":"Chaturdashi","rank":14},"isPlaceholder":false},"gender":"male","fullName":"Rameshwar Sarda"}],"anniversary":{"date":{"display":"14 Feb","month":2,"day":14},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sachin-mamta","relation":"Son","displayName":"Mamta & Sachin Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Mamta","avatar":"mamta.jpeg","dob":{"date":{"display":"03 May","month":5,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Mamta Sarda"},{"name":"Sachin","avatar":"sachin_sarda.jpeg","dob":{"date":{"display":"24 Oct","month":10,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sachin Sarda"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[{"kind":"leaf","id":"branch-raashi","relation":"Daughter","displayName":"Raashi Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Raashi","avatar":"raashi.jpeg","dob":{"date":{"display":"15 Nov","month":11,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Raashi Sarda"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-palak-s","relation":"Daughter","displayName":"Palak Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Palak","avatar":"palak_s.jpeg","dob":{"date":{"display":"08 Jun","month":6,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Palak Sarda"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-kamlesh-sarika","relation":"Daughter","displayName":"Sarika & Kamlesh Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sarika","avatar":"sarika.jpeg","dob":{"date":{"display":"12 Mar","month":3,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sarika Jaju"},{"name":"Kamlesh","avatar":"kamlesh.jpeg","dob":{"date":{"display":"05 Feb","month":2,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kamlesh Jaju"}],"anniversary":{"date":{"display":"01 May","month":5,"day":1},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-nupur","relation":"Daughter","displayName":"Nupur Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Nupur","avatar":"nupur.jpeg","dob":{"date":{"display":"22 Aug","month":8,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Nupur Jaju"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-achal","relation":"Daughter","displayName":"Achal Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Achal","avatar":"achal.jpeg","dob":{"date":{"display":"14 Oct","month":10,"day":14},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Achal Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-pankaj-seema","relation":"Daughter","displayName":"Seema & Pankaj Toshniwal","isRoot":false,"defaultOpen":false,"people":[{"name":"Seema","avatar":"seema.jpeg","dob":{"date":{"display":"01 Jan","month":1,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Seema Toshniwal"},{"name":"Pankaj","avatar":"pankaj_t.jpeg","dob":{"date":{"display":"27 Jan","month":1,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Pankaj Toshniwal"}],"anniversary":{"date":{"display":"19 Jun","month":6,"day":19},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-akshara-t","relation":"Daughter","displayName":"Akshara Toshniwal","isRoot":false,"defaultOpen":false,"people":[{"name":"Akshara","avatar":"akshara_t.jpeg","dob":{"date":{"display":"12 Aug","month":8,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Akshara Toshniwal"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-nidhi","relation":"Daughter","displayName":"Nidhi Toshniwal","isRoot":false,"defaultOpen":false,"people":[{"name":"Nidhi","avatar":"nidhi.jpeg","dob":{"date":{"display":"08 Oct","month":10,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Nidhi Toshniwal"}],"anniversary":null,"children":[]}]}]}]},{"kind":"couple","id":"branch-dalichand-leela","relation":"Daughter","displayName":"Leela & Dalichand Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Leela","avatar":"leela_tapadia.jpeg","dob":null,"dod":{"date":{"display":"03 Jul","month":7,"day":3,"year":2020},"tithi":{"name":"Chaturdashi","rank":14},"isPlaceholder":false},"gender":"female","fullName":"Leela Tapadia"},{"name":"Dalichand","avatar":"dalichand.jpeg","dob":{"date":{"display":"03 Feb","month":2,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Dalichand Tapadia"}],"anniversary":{"date":{"display":"30 Nov","month":11,"day":30,"year":1964},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-kantilal-sujata","relation":"Son","displayName":"Sujata & Kantilal Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Sujata","avatar":"sujata.jpeg","dob":{"date":{"display":"09 Apr","month":4,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sujata Tapadia"},{"name":"Kantilal","avatar":"kantilal.jpeg","dob":{"date":{"display":"30 Mar","month":3,"day":30},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kantilal Tapadia"}],"anniversary":{"date":{"display":"30 Nov","month":11,"day":30},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-darshan-monika","relation":"Son","displayName":"Monika & Darshan","isRoot":false,"defaultOpen":false,"people":[{"name":"Monika","avatar":"monika.jpeg","dob":{"date":{"display":"06 Mar","month":3,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Monika Tapadia"},{"name":"Darshan","avatar":"darshan.jpeg","dob":{"date":{"display":"11 Dec","month":12,"day":11},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Darshan Tapadia"}],"anniversary":{"date":{"display":"17 Mar","month":3,"day":17},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-riyansh","relation":"Son","displayName":"Riyansh Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Riyansh","avatar":"riyansh.jpeg","dob":{"date":{"display":"23 Oct","month":10,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Riyansh Tapadia"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-riyanshi","relation":"Daughter","displayName":"Riyanshi Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Riyanshi","avatar":"riyanshi.jpeg","dob":{"date":{"display":"09 Mar","month":3,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Riyanshi Tapadia"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-pankaj-prachi","relation":"Daughter","displayName":"Prachi & Pankaj Bihani","isRoot":false,"defaultOpen":false,"people":[{"name":"Prachi","avatar":"prachi.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Prachi Bihani"},{"name":"Pankaj","avatar":"pankaj.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Pankaj Bihani"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[{"kind":"leaf","id":"branch-nimish","relation":"Son","displayName":"Nimish Bihani","isRoot":false,"defaultOpen":false,"people":[{"name":"Nimish","avatar":"nimish.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Nimish Bihani"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-mahendra-sunita","relation":"Son","displayName":"Sunita & Mahendra Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Sunita","avatar":"sunita_t.jpeg","dob":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sunita Tapadia"},{"name":"Mahendra","avatar":"mahendra.jpeg","dob":{"date":{"display":"05 Jul","month":7,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Mahendra Tapadia"}],"anniversary":{"date":{"display":"10 Feb","month":2,"day":10},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-vijay-pradnya","relation":"Daughter","displayName":"Pradnya & Vijay Ovhal","isRoot":false,"defaultOpen":false,"people":[{"name":"Pradnya","avatar":"pradnya.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Pradnya Ovhal"},{"name":"Vijay","avatar":"vijay.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Vijay Ovhal"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[]}]}]},{"kind":"couple","id":"branch-hanumandas-rukmini","relation":"Daughter","displayName":"Rukmini & Hanumandas Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Rukmini","avatar":"rukmini.jpeg","dob":{"date":{"display":"29 Oct","month":10,"day":29,"year":1960},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Rukmini Tapadia"},{"name":"Hanumandas","avatar":"hanumandas.jpeg","dob":null,"dod":{"date":{"display":"27 Jan","month":1,"day":27},"tithi":{"name":"Ashtami","rank":8},"isPlaceholder":false},"gender":"male","fullName":"Hanumandas Tapadia"}],"anniversary":{"date":{"display":"06 Dec","month":12,"day":6},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-rajendra-shilpa","relation":"Daughter","displayName":"Shilpa & Rajendra Bhansali","isRoot":false,"defaultOpen":false,"people":[{"name":"Shilpa","avatar":"shilpa.jpeg","dob":{"date":{"display":"31 Dec","month":12,"day":31,"year":1977},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shilpa Bhansali"},{"name":"Rajendra","avatar":"rajendra_b.jpeg","dob":{"date":{"display":"24 Oct","month":10,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rajendra Bhansali"}],"anniversary":{"date":{"display":"29 Apr","month":4,"day":29,"year":1998},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-rashi","relation":"Daughter","displayName":"Rashi Bhansali","isRoot":false,"defaultOpen":false,"people":[{"name":"Rashi","avatar":"rashi.jpeg","dob":{"date":{"display":"24 Feb","month":2,"day":24,"year":2000},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Rashi Bhansali"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-khushi","relation":"Daughter","displayName":"Khushi Bhansali","isRoot":false,"defaultOpen":false,"people":[{"name":"Khushi","avatar":"khushi.jpeg","dob":{"date":{"display":"25 Mar","month":3,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Khushi Bhansali"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-rajendra-trupti","relation":"Daughter","displayName":"Trupti & Rajendra Bajaj","isRoot":false,"defaultOpen":false,"people":[{"name":"Trupti","avatar":"trupti.jpeg","dob":{"date":{"display":"18 May","month":5,"day":18,"year":1981},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Trupti Bajaj"},{"name":"Rajendra","avatar":"rajendra_bajaj.jpeg","dob":{"date":{"display":"26 Jan","month":1,"day":26},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rajendra Bajaj"}],"anniversary":{"date":{"display":"29 Apr","month":4,"day":29,"year":1998},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-rushabh","relation":"Son","displayName":"Rushabh Bajaj","isRoot":false,"defaultOpen":false,"people":[{"name":"Rushabh","avatar":"rushabh.jpeg","dob":{"date":{"display":"28 Sep","month":9,"day":28},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rushabh Bajaj"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-darshan-deepika","relation":"Daughter","displayName":"Deepika & Darshan Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Deepika","avatar":"deepika.jpeg","dob":{"date":{"display":"18 Feb","month":2,"day":18,"year":1999},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Deepika Laddha"},{"name":"Darshan","avatar":"darshan_l.jpeg","dob":{"date":{"display":"12 Apr","month":4,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Darshan Laddha"}],"anniversary":{"date":{"display":"31 Jan","month":1,"day":31},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-darshika","relation":"Daughter","displayName":"Darshika Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Darshika","avatar":"darshika.jpeg","dob":{"date":{"display":"10 Aug","month":8,"day":10,"year":2025},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Darshika Laddha"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-umesh-rani","relation":"Daughter","displayName":"Rani & Umesh Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Rani","avatar":"rani.jpeg","dob":{"date":{"display":"29 Sep","month":9,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Rani Rathi"},{"name":"Umesh","avatar":"umesh.jpeg","dob":{"date":{"display":"14 Mar","month":3,"day":14},"tithi":null,"isPlaceholder":false},"dod":{"date":{"display":"14 Mar","month":3,"day":14},"tithi":{"name":"Panchami","rank":5},"isPlaceholder":false},"gender":"male","fullName":"Umesh Rathi"}],"anniversary":{"date":{"display":"14 May","month":5,"day":14,"year":2007},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-shruti","relation":"Daughter","displayName":"Shruti Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Shruti","avatar":"shruti.jpeg","dob":{"date":{"display":"02 Mar","month":3,"day":2,"year":2008},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shruti Rathi"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-umakant-pooja","relation":"Daughter","displayName":"Pooja & Umakant Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Pooja","avatar":"pooja_rathi.jpeg","dob":{"date":{"display":"29 Mar","month":3,"day":29,"year":1985},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pooja Rathi"},{"name":"Umakant","avatar":"umakant.jpeg","dob":{"date":{"display":"10 Oct","month":10,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Umakant Rathi"}],"anniversary":{"date":{"display":"07 May","month":5,"day":7,"year":2008},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-palak","relation":"Daughter","displayName":"Palak Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Palak","avatar":"palak.jpeg","dob":{"date":{"display":"03 Aug","month":8,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Palak Rathi"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-hiral","relation":"Daughter","displayName":"Hiral Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Hiral","avatar":"hiral.jpeg","dob":{"date":{"display":"13 Feb","month":2,"day":13,"year":2012},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Hiral Rathi"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-madanlal-santosh","relation":"Daughter","displayName":"Santosh & Madanlal Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Santosh","avatar":"santosh.jpeg","dob":{"date":{"display":"25 Apr","month":4,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Santosh Rathi"},{"name":"Madanlal Rathi","avatar":"madanlal_rathi.jpeg","dob":{"date":{"display":"27 Jul","month":7,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Madanlal Rathi"}],"anniversary":{"date":{"display":"09 Feb","month":2,"day":9},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sandesh-khushbu","relation":"Son","displayName":"Khushbu & Sandesh Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Khushbu","avatar":"khushbu.jpeg","dob":{"date":{"display":"26 Feb","month":2,"day":26},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Khushbu Rathi"},{"name":"Sandesh","avatar":"sandesh.jpeg","dob":{"date":{"display":"03 Jul","month":7,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sandesh Rathi"}],"anniversary":{"date":{"display":"12 Dec","month":12,"day":12},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-anvi","relation":"Daughter","displayName":"Anvi Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Anvi","avatar":"anvi.jpeg","dob":{"date":{"display":"19 Sep","month":9,"day":19},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Anvi Rathi"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-avira","relation":"Daughter","displayName":"Avira Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Avira","avatar":"avira.jpeg","dob":{"date":{"display":"07 Jun","month":6,"day":7},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Avira Rathi"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-kailash-chanchal","relation":"Daughter","displayName":"Chanchal & Kailash Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Chanchal","avatar":"chanchal.jpeg","dob":{"date":{"display":"18 Feb","month":2,"day":18},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Chanchal Kasat"},{"name":"Kailash","avatar":"kailash.jpeg","dob":{"date":{"display":"12 Feb","month":2,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kailash Kasat"}],"anniversary":{"date":{"display":"23 Jun","month":6,"day":23},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-harsh","relation":"Son","displayName":"Harsh Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Harsh","avatar":"harsh.jpeg","dob":{"date":{"display":"22 Jan","month":1,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Harsh Kasat"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-neha","relation":"Daughter","displayName":"Neha Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Neha","avatar":"neha.jpeg","dob":{"date":{"display":"02 Jun","month":6,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Neha Kasat"}],"anniversary":null,"children":[]}]}]}]},{"kind":"couple","id":"branch-srinivas-lakshmi-singhi","relation":"Son","displayName":"Lakshmi & Srinivas Singhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Lakshmi","avatar":"lakshmi.jpeg","dob":null,"dod":null,"gender":"female","fullName":"Lakshmi Singhi"},{"name":"Srinivas","avatar":"srinivas.jpeg","dob":null,"dod":null,"gender":"male","fullName":"Srinivas Singhi"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-hiralal-sitabai-jaju","relation":"Son","displayName":"Sitabai & Hiralal Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sitabai","avatar":"sitabai.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Ashtami","rank":8},"isPlaceholder":false},"gender":"female","fullName":"Sitabai Jaju"},{"name":"Hiralal","avatar":"hiralal.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Navami","rank":9},"isPlaceholder":false},"gender":"male","fullName":"Hiralal Jaju"}],"anniversary":null,"children":[]},{"kind":"single","id":"branch-ghisibai-kasat","relation":"Daughter","displayName":"Ghisibai Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Ghisibai","avatar":"ghisibai.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Beej","rank":2},"isPlaceholder":false},"gender":"female","fullName":"Ghisibai Kasat"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-rambabai-shankarlal-bhutada","relation":"Daughter","displayName":"Rambabai & Shankarlal Bhutada","isRoot":false,"defaultOpen":false,"people":[{"name":"Rambabai","avatar":"rambabai.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Navami","rank":9},"isPlaceholder":false},"gender":"female","fullName":"Rambabai Bhutada"},{"name":"Shankarlal","avatar":"shankarlal.jpeg","dob":null,"dod":null,"gender":"male","fullName":"Shankarlal Bhutada"}],"anniversary":null,"children":[]}]}]}]}];
+const FAMILY_DATA = [{"kind":"single","id":"branch-surajmalji-jaju","relation":"Root","displayName":"Surajmalji Jaju","isRoot":true,"defaultOpen":true,"people":[{"name":"Surajmalji","avatar":null,"dob":null,"dod":null,"gender":"male","fullName":"Surajmalji Jaju"}],"anniversary":null,"children":[{"kind":"single","id":"branch-raghunathji-jaju","relation":"Son","displayName":"Raghunathji Jaju","isRoot":false,"defaultOpen":true,"people":[{"name":"Raghunathji","avatar":null,"dob":null,"dod":null,"gender":"male","fullName":"Raghunathji Jaju"}],"anniversary":null,"children":[{"kind":"couple","id":"branch-kesar-bai-mangniram-jaju","relation":"Son","displayName":"Kesar Bai & Mangniram Jaju","isRoot":false,"defaultOpen":true,"people":[{"name":"Kesar Bai","avatar":"kesar_bai.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Ekam","rank":1},"isPlaceholder":false},"gender":"female","fullName":"Kesar Bai Jaju"},{"name":"Mangniram","avatar":"mangniram.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Ekadashi","rank":11},"isPlaceholder":false},"gender":"male","fullName":"Mangniram Jaju"}],"anniversary":null,"children":[{"kind":"couple","id":"branch-badrinarayan-jaju-geeta-devi-jaju","relation":"Son","displayName":"Geeta Devi & Badrinarayan Jaju","isRoot":false,"defaultOpen":true,"people":[{"name":"Geeta Devi","avatar":"geeta_devi.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"female","fullName":"Geeta Devi"},{"name":"Badrinarayan","avatar":"badrinarayan.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Shashthi","rank":6},"isPlaceholder":false},"gender":"male","fullName":"Badrinarayan Jaju"}],"anniversary":null,"children":[{"kind":"couple","id":"branch-ramnarayan-leela","relation":"Son","displayName":"Leela & Ramnarayan Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Leela","avatar":"leela_jaju.jpeg","dob":null,"dod":{"date":{"display":"07 Nov","month":11,"day":7},"tithi":{"name":"Shashthi","rank":6},"isPlaceholder":false},"gender":"female","fullName":"Leela Jaju"},{"name":"Ramnarayan","avatar":"ramnarayan.jpeg","dob":null,"dod":{"date":null,"tithi":{"name":"Chaturthi","rank":4},"isPlaceholder":false},"gender":"male","fullName":"Ramnarayan Jaju"}],"anniversary":{"date":{"display":"05 Nov","month":11,"day":5},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-rita-shamsundar","relation":"Daughter","displayName":"Rita & Shamsundar Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Rita","avatar":"rita.jpeg","dob":null,"dod":{"date":{"display":"02 Nov","month":11,"day":2},"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"female","fullName":"Rita Dalya"},{"name":"Shamsundar","avatar":"shamsundar.jpeg","dob":null,"dod":{"date":{"display":"19 Mar","month":3,"day":19},"tithi":{"name":"Ekam","rank":1},"isPlaceholder":false},"gender":"male","fullName":"Shamsundar Dalya"}],"anniversary":{"date":{"display":"06 Dec","month":12,"day":6,"year":1976},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-vinod-manju","relation":"Son","displayName":"Manju & Vinod Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Manju","avatar":"manju_vinod.jpeg","dob":{"date":{"display":"27 Oct","month":10,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Manju Dalya"},{"name":"Vinod","avatar":"vinod.jpeg","dob":{"date":{"display":"11 Dec","month":12,"day":11},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Vinod Dalya"}],"anniversary":{"date":{"display":"28 Jun","month":6,"day":28},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-khushal","relation":"Son","displayName":"Khushal Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Khushal","avatar":"kushal.jpeg","dob":{"date":{"display":"17 Mar","month":3,"day":17},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Khushal Dalya"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-lakshita","relation":"Daughter","displayName":"Lakshita Dalya","isRoot":false,"defaultOpen":false,"people":[{"name":"Lakshita","avatar":"lakshita.jpeg","dob":{"date":{"display":"31 May","month":5,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Lakshita Dalya"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-harinarayan-sangeeta","relation":"Son","displayName":"Sangeeta & Harinarayan Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sangeeta","avatar":"sangita_hari.jpeg","dob":{"date":{"display":"10 Dec","month":12,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sangeeta Jaju"},{"name":"Harinarayan","avatar":"harinarayan.jpeg","dob":{"date":{"display":"06 Oct","month":10,"day":6},"tithi":null,"isPlaceholder":false},"dod":{"date":{"display":"06 Oct","month":10,"day":6},"tithi":{"name":"Chaturthi","rank":4},"isPlaceholder":false},"gender":"male","fullName":"Harinarayan Jaju"}],"anniversary":{"date":{"display":"08 Dec","month":12,"day":8,"year":1988},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-shravan-aakanksha","relation":"Son","displayName":"Aakanksha & Shravan","isRoot":false,"defaultOpen":false,"people":[{"name":"Aakanksha","avatar":"aakanksha.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Aakanksha Jaju"},{"name":"Shravan","avatar":"shravan.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Shravan Jaju"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[{"kind":"leaf","id":"branch-advika","relation":"Daughter","displayName":"Advika Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Advika","avatar":"advika.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Advika Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-preeti-pratik","relation":"Daughter","displayName":"Preeti & Pratik","isRoot":false,"defaultOpen":false,"people":[{"name":"Preeti","avatar":"preeti.jpeg","dob":{"date":{"display":"17 Dec","month":12,"day":17},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Preeti Jaju"},{"name":"Pratik","avatar":"pratik_preeti.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Pratik Jaju"}],"anniversary":{"date":{"display":"20 Jun","month":6,"day":20},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-yug","relation":"Son","displayName":"Yug Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Yug","avatar":"yug.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Yug Jaju"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-avira-p","relation":"Daughter","displayName":"Avira Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Avira","avatar":"avira_preeti.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Avira Jaju"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-sunita-nandkishor","relation":"Daughter","displayName":"Sunita & Nandkishor Pungliya","isRoot":false,"defaultOpen":false,"people":[{"name":"Sunita","avatar":"sunita.jpeg","dob":{"date":{"display":"01 Apr","month":4,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sunita Pungliya"},{"name":"Nandkishor","avatar":"nandkishor_p.jpeg","dob":{"date":{"display":"21 May","month":5,"day":21},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Nandkishor Pungliya"}],"anniversary":{"date":{"display":"09 Feb","month":2,"day":9,"year":1980},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-mrunal-nitesh","relation":"Daughter","displayName":"Mrunal & Nitesh Mandhane","isRoot":false,"defaultOpen":false,"people":[{"name":"Mrunal","avatar":"mrunal.jpeg","dob":{"date":{"display":"29 Jul","month":7,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Mrunal Mandhane"},{"name":"Nitesh","avatar":"nitesh.jpeg","dob":{"date":{"display":"28 Feb","month":2,"day":28},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Nitesh Mandhane"}],"anniversary":{"date":{"display":"25 Jan","month":1,"day":25},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-aadya","relation":"Daughter","displayName":"Aadya Mandhane","isRoot":false,"defaultOpen":false,"people":[{"name":"Aadya","avatar":"aadya.jpeg","dob":{"date":{"display":"10 Apr","month":4,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Aadya Mandhane"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-megha-rahul","relation":"Daughter","displayName":"Megha & Rahul Nahar","isRoot":false,"defaultOpen":false,"people":[{"name":"Megha","avatar":"megha_nahar.jpeg","dob":{"date":{"display":"27 Jun","month":6,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Megha Nahar"},{"name":"Rahul","avatar":"rahul.jpeg","dob":{"date":{"display":"03 Apr","month":4,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rahul Nahar"}],"anniversary":{"date":{"display":"26 Dec","month":12,"day":26},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-aatman","relation":"Son","displayName":"Aatman Nahar","isRoot":false,"defaultOpen":false,"people":[{"name":"Aatman","avatar":"aatman.jpeg","dob":{"date":{"display":"04 May","month":5,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Aatman Nahar"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-dhara-atul","relation":"Daughter","displayName":"Dhara & Atul Malpani","isRoot":false,"defaultOpen":false,"people":[{"name":"Dhara","avatar":"dhara.jpeg","dob":{"date":{"display":"28 Oct","month":10,"day":28},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Dhara Malpani"},{"name":"Atul","avatar":"atul_malpani.jpeg","dob":{"date":{"display":"24 Mar","month":3,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Atul Malpani"}],"anniversary":{"date":{"display":"29 Apr","month":4,"day":29},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-dhairya","relation":"Son","displayName":"Dhairya Malpani","isRoot":false,"defaultOpen":false,"people":[{"name":"Dhairya","avatar":"dhairya.jpeg","dob":{"date":{"display":"29 Nov","month":11,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Dhairya Malpani"}],"anniversary":null,"children":[]}]}]},{"kind":"leaf","id":"branch-jugalkishor","relation":"Son","displayName":"Jugalkishor Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Jugalkishor","avatar":"jugalkishore.jpeg","dob":{"date":{"display":"10 May","month":5,"day":10,"year":2010},"tithi":null,"isPlaceholder":false},"dod":{"date":{"display":"10 May","month":5,"day":10},"tithi":{"name":"Panchami","rank":5},"isPlaceholder":false},"gender":"male","fullName":"Jugalkishor Jaju"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-sangeeta-ramdhan","relation":"Daughter","displayName":"Sangeeta & Ramdhan Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Sangeeta","avatar":"sangeeta_boob.jpeg","dob":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sangeeta Boob"},{"name":"Ramdhan","avatar":"ramdhan.jpeg","dob":{"date":{"display":"02 Feb","month":2,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Ramdhan Boob"}],"anniversary":{"date":{"display":"27 Nov","month":11,"day":27},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sachin-devashree","relation":"Son","displayName":"Devashree & Sachin","isRoot":false,"defaultOpen":false,"people":[{"name":"Devashree","avatar":"devashree.jpeg","dob":{"date":{"display":"11 Sep","month":9,"day":11},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Devashree Boob"},{"name":"Sachin","avatar":"sachin.jpeg","dob":{"date":{"display":"04 Apr","month":4,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sachin Boob"}],"anniversary":{"date":{"display":"13 Jul","month":7,"day":13},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-agastya","relation":"Son","displayName":"Agastya Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Agastya","avatar":"agastya.jpeg","dob":{"date":{"display":"18 May","month":5,"day":18},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Agastya Boob"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-sattviki","relation":"Daughter","displayName":"Sattviki Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Sattviki","avatar":"sattviki.jpeg","dob":{"date":{"display":"27 Jul","month":7,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sattviki Boob"}],"anniversary":null,"children":[]}]},{"kind":"leaf","id":"branch-surabhi","relation":"Daughter","displayName":"Surabhi Boob","isRoot":false,"defaultOpen":false,"people":[{"name":"Surabhi","avatar":"surabhi.jpeg","dob":{"date":{"display":"06 Nov","month":11,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Surabhi Boob"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-lunkaran-sonali","relation":"Son","displayName":"Sonali & Lunkaran Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sonali","avatar":"sonali.jpeg","dob":null,"dod":{"date":{"display":"17 Jan","month":1,"day":17},"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"female","fullName":"Sonali Jaju"},{"name":"Lunkaran","avatar":"lunkaran.jpeg","dob":{"date":{"display":"01 Mar","month":3,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Lunkaran Jaju"}],"anniversary":{"date":{"display":"25 Jun","month":6,"day":25,"year":1975},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-anand-sweta","relation":"Son","displayName":"Sweta & Anand Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sweta","avatar":"sweta.jpeg","dob":{"date":{"display":"21 Jun","month":6,"day":21},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sweta Jaju"},{"name":"Anand","avatar":"anand.jpeg","dob":{"date":{"display":"12 Sep","month":9,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Anand Jaju"}],"anniversary":{"date":{"display":"15 Jan","month":1,"day":15},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-aarush","relation":"Son","displayName":"Aarush Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Aarush","avatar":"aarush.jpeg","dob":{"date":{"display":"23 Oct","month":10,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Aarush Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-amruta-atul","relation":"Daughter","displayName":"Amruta & Atul Rathod","isRoot":false,"defaultOpen":false,"people":[{"name":"Amruta","avatar":"amruta.jpeg","dob":{"date":{"display":"13 Feb","month":2,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Amruta Rathod"},{"name":"Atul","avatar":"atul_rathod.jpeg","dob":{"date":{"display":"08 Sep","month":9,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Atul Rathod"}],"anniversary":{"date":{"display":"25 Jul","month":7,"day":25},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-akshara","relation":"Daughter","displayName":"Akshara Rathod","isRoot":false,"defaultOpen":false,"people":[{"name":"Akshara","avatar":"akshara.jpeg","dob":{"date":{"display":"02 Dec","month":12,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Akshara Rathod"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-anushka","relation":"Daughter","displayName":"Anushka Rathod","isRoot":false,"defaultOpen":false,"people":[{"name":"Anushka","avatar":"anushka.jpeg","dob":{"date":{"display":"18 Jan","month":1,"day":18},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Anushka Rathod"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-aarti-narendra","relation":"Daughter","displayName":"Aarti & Narendra Jadhav","isRoot":false,"defaultOpen":false,"people":[{"name":"Aarti","avatar":"aarti.jpeg","dob":{"date":{"display":"13 Apr","month":4,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Aarti Jadhav"},{"name":"Narendra","avatar":"narendra.jpeg","dob":{"date":{"display":"27 Dec","month":12,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Narendra Jadhav"}],"anniversary":{"date":{"display":"26 Feb","month":2,"day":26},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-atharva","relation":"Son","displayName":"Atharva Jadhav","isRoot":false,"defaultOpen":false,"people":[{"name":"Atharva","avatar":"atharva.jpeg","dob":{"date":{"display":"24 Jun","month":6,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Atharva Jadhav"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-kaluram-sushila","relation":"Son","displayName":"Sushila & Kaluram Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sushila","avatar":"sushila.jpeg","dob":{"date":{"display":"10 Dec","month":12,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sushila Jaju"},{"name":"Kaluram","avatar":"kaluram_traditional_portrait.jpeg","dob":null,"dod":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":{"name":"Ekadashi","rank":11},"isPlaceholder":false},"gender":"male","fullName":"Kaluram Jaju"}],"anniversary":{"date":{"display":"17 Apr","month":4,"day":17,"year":1978},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-kavita-aashish","relation":"Daughter","displayName":"Kavita & Aashish Dhoot","isRoot":false,"defaultOpen":false,"people":[{"name":"Kavita","avatar":"kavita.jpeg","dob":{"date":{"display":"08 May","month":5,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Kavita Dhoot"},{"name":"Aashish","avatar":"aashish.jpeg","dob":{"date":{"display":"06 Oct","month":10,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Aashish Dhoot"}],"anniversary":{"date":{"display":"09 Jul","month":7,"day":9},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-parth","relation":"Son","displayName":"Parth Dhoot","isRoot":false,"defaultOpen":false,"people":[{"name":"Parth","avatar":"parth.jpeg","dob":{"date":{"display":"23 Sep","month":9,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Parth Dhoot"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-kavya","relation":"Son","displayName":"Kavya Dhoot","isRoot":false,"defaultOpen":false,"people":[{"name":"Kavya","avatar":"kavya.jpeg","dob":{"date":{"display":"03 Jun","month":6,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kavya Dhoot"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-kapil-bharti","relation":"Son","displayName":"Bharti & Kapil Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Bharti","avatar":"bharti.jpeg","dob":{"date":{"display":"13 Feb","month":2,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Bharti Jaju"},{"name":"Kapil","avatar":"kapil.jpeg","dob":{"date":{"display":"12 May","month":5,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kapil Jaju"}],"anniversary":{"date":{"display":"08 Dec","month":12,"day":8},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-likhit","relation":"Son","displayName":"Likhit Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Likhit","avatar":"likhit.jpeg","dob":{"date":{"display":"19 Dec","month":12,"day":19},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Likhit Jaju"}],"anniversary":null,"children":[]}]},{"kind":"leaf","id":"branch-karuna","relation":"Daughter","displayName":"Karuna Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Karuna","avatar":"karuna.jpeg","dob":{"date":{"display":"10 Sep","month":9,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Karuna Jaju"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-kasturi-parag","relation":"Daughter","displayName":"Kasturi & Parag Mantri","isRoot":false,"defaultOpen":false,"people":[{"name":"Kasturi","avatar":"kasturi.jpeg","dob":{"date":{"display":"24 Mar","month":3,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Kasturi Mantri"},{"name":"Parag","avatar":"parag.jpeg","dob":{"date":{"display":"10 Aug","month":8,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Parag Mantri"}],"anniversary":{"date":{"display":"11 Nov","month":11,"day":11},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-bhowmik","relation":"Son","displayName":"Bhowmik Mantri","isRoot":false,"defaultOpen":false,"people":[{"name":"Bhowmik","avatar":"bhowmik.jpeg","dob":{"date":{"display":"08 Feb","month":2,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Bhowmik Mantri"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-devanshi","relation":"Daughter","displayName":"Devanshi Mantri","isRoot":false,"defaultOpen":false,"people":[{"name":"Devanshi","avatar":"devanshi.jpeg","dob":{"date":{"display":"05 Jul","month":7,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Devanshi Mantri"}],"anniversary":null,"children":[]}]}]},{"kind":"single","id":"branch-madanlal","relation":"Son","displayName":"Madanlal Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Madanlal","avatar":"madanlal.jpeg","dob":null,"dod":{"date":{"display":"24 Mar","month":3,"day":24,"year":1999},"tithi":{"name":"Dashami","rank":10},"isPlaceholder":false},"gender":"male","fullName":"Madanlal Jaju"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-ramkishore-urmila","relation":"Son","displayName":"Urmila & Ramkishore Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Urmila","avatar":"urmila.jpeg","dob":null,"dod":{"date":{"display":"28 Feb","month":2,"day":28},"tithi":{"name":"Trayodashi","rank":13},"isPlaceholder":false},"gender":"female","fullName":"Urmila Jaju"},{"name":"Ramkishore","avatar":"ramkishore.jpeg","dob":{"date":{"display":"03 May","month":5,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Ramkishore Jaju"}],"anniversary":{"date":{"display":"02 Jul","month":7,"day":2},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-pavan-raksha","relation":"Son","displayName":"Raksha & Pavan Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Raksha","avatar":"raksha.jpeg","dob":{"date":{"display":"13 Sep","month":9,"day":13},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Raksha Jaju"},{"name":"Pavan","avatar":"pavan.jpeg","dob":{"date":{"display":"03 Feb","month":2,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Pavan Jaju"}],"anniversary":{"date":{"display":"02 Jul","month":7,"day":2},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-viresha","relation":"Daughter","displayName":"Viresha Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Viresha","avatar":"viresha.jpeg","dob":{"date":{"display":"09 Apr","month":4,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Viresha Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-pournima-abhishek","relation":"Daughter","displayName":"Pournima & Abhishek Nagarkar","isRoot":false,"defaultOpen":false,"people":[{"name":"Pournima","avatar":"pournima.jpeg","dob":{"date":{"display":"04 Apr","month":4,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pournima Nagarkar"},{"name":"Abhishek","avatar":"abhishek.jpeg","dob":{"date":{"display":"05 Jun","month":6,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Abhishek Nagarkar"}],"anniversary":{"date":{"display":"07 Dec","month":12,"day":7},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-arnav","relation":"Son","displayName":"Arnav Nagarkar","isRoot":false,"defaultOpen":false,"people":[{"name":"Arnav","avatar":"arnav.jpeg","dob":{"date":{"display":"09 Oct","month":10,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Arnav Nagarkar"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-kamalkishore-manju","relation":"Son","displayName":"Manju & Kamalkishore Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Manju","avatar":"manju_jaju.jpeg","dob":{"date":{"display":"15 Aug","month":8,"day":15,"year":1975},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Manju Jaju"},{"name":"Kamalkishore","avatar":"kamalkishore.jpeg","dob":{"date":{"display":"04 Jul","month":7,"day":4,"year":1967},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kamalkishore Jaju"}],"anniversary":{"date":{"display":"07 Mar","month":3,"day":7,"year":1991},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-divyani-kamal","relation":"Daughter","displayName":"Divyani & Kamal Gandhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Divyani","avatar":"divyani.jpeg","dob":{"date":{"display":"17 Apr","month":4,"day":17},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Divyani Gandhi"},{"name":"Kamal","avatar":"kamal.jpeg","dob":{"date":{"display":"01 Jan","month":1,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kamal Gandhi"}],"anniversary":{"date":{"display":"08 Mar","month":3,"day":8},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-himani","relation":"Daughter","displayName":"Himani Gandhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Himani","avatar":"himani.jpeg","dob":{"date":{"display":"12 Jan","month":1,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Himani Gandhi"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-sanvi","relation":"Daughter","displayName":"Sanvi Gandhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Sanvi","avatar":"sanvi.jpeg","dob":{"date":{"display":"22 Nov","month":11,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sanvi Gandhi"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-gaurav-megha","relation":"Son","displayName":"Megha & Gaurav Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Megha","avatar":"megha_g.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Megha Jaju"},{"name":"Gaurav","avatar":"gaurav.jpeg","dob":{"date":{"display":"16 Feb","month":2,"day":16},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Gaurav Jaju"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[]}]},{"kind":"couple","id":"branch-harkudevi-mohanlal","relation":"Daughter","displayName":"Harkudevi & Mohanlal Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Harkudevi","avatar":"harkudevi.jpeg","dob":null,"dod":{"date":{"display":"29 Mar","month":3,"day":29,"year":2020},"tithi":{"name":"Panchami","rank":5},"isPlaceholder":false},"gender":"female","fullName":"Harkudevi Harkut"},{"name":"Mohanlal Harkut","avatar":"mohanlal_harkut.jpeg","dob":{"date":{"display":"05 Jun","month":6,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Mohanlal Harkut"}],"anniversary":{"date":{"display":"15 Mar","month":3,"day":15},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-laduram-pushpa","relation":"Son","displayName":"Pushpa & Laduram Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Pushpa","avatar":"pushpa.jpeg","dob":{"date":{"display":"22 Jul","month":7,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pushpa Harkut"},{"name":"Laduram","avatar":"laduram.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Laduram Harkut"}],"anniversary":{"date":{"display":"02 May","month":5,"day":2},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-punit-deeksha","relation":"Son","displayName":"Deeksha & Punit","isRoot":false,"defaultOpen":false,"people":[{"name":"Deeksha","avatar":"deeksha.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Deeksha Harkut"},{"name":"Punit","avatar":"punit.jpeg","dob":{"date":{"display":"21 Dec","month":12,"day":21},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Punit Harkut"}],"anniversary":{"date":{"display":"31 May","month":5,"day":31},"isPlaceholder":false},"children":[]},{"kind":"leaf","id":"branch-lehari","relation":"Daughter","displayName":"Lehari Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Lehari","avatar":"lehari.jpeg","dob":{"date":{"display":"04 Jan","month":1,"day":4},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Lehari Harkut"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-pooja-ajay","relation":"Daughter","displayName":"Pooja & Ajay Charkha","isRoot":false,"defaultOpen":false,"people":[{"name":"Pooja","avatar":"pooja.jpeg","dob":{"date":{"display":"14 Dec","month":12,"day":14},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pooja Charkha"},{"name":"Ajay","avatar":"ajay.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Ajay Charkha"}],"anniversary":{"date":{"display":"16 Feb","month":2,"day":16},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-yashvi","relation":"Daughter","displayName":"Yashvi Charkha","isRoot":false,"defaultOpen":false,"people":[{"name":"Yashvi","avatar":"yashvi.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Yashvi Charkha"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-charu","relation":"Daughter","displayName":"Charu Charkha","isRoot":false,"defaultOpen":false,"people":[{"name":"Charu","avatar":"charu.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Charu Charkha"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-nandkishor-pavitra","relation":"Son","displayName":"Pavitra & Nandkishor Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Pavitra","avatar":"pavitra.jpeg","dob":{"date":{"display":"25 Aug","month":8,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pavitra Harkut"},{"name":"Nandkishor","avatar":"nandkishor_h.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Nandkishor Harkut"}],"anniversary":{"date":{"display":"04 Feb","month":2,"day":4},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-harshal-aruna","relation":"Son","displayName":"Aruna & Harshal","isRoot":false,"defaultOpen":false,"people":[{"name":"Aruna","avatar":"aruna.jpeg","dob":{"date":{"display":"06 Aug","month":8,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Aruna Harkut"},{"name":"Harshal","avatar":"harshal.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Harshal Harkut"}],"anniversary":{"date":{"display":"28 Jun","month":6,"day":28},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-lavya","relation":"Son","displayName":"Lavya Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Lavya","avatar":"lavya.jpeg","dob":{"date":{"display":"30 Mar","month":3,"day":30},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Lavya Harkut"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-divit","relation":"Son","displayName":"Divit Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Divit","avatar":"divit.jpeg","dob":{"date":{"display":"02 Jul","month":7,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Divit Harkut"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-lakshit-shivani","relation":"Son","displayName":"Shivani & Lakshit","isRoot":false,"defaultOpen":false,"people":[{"name":"Shivani","avatar":"shivani.jpeg","dob":{"date":{"display":"03 Feb","month":2,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shivani Harkut"},{"name":"Lakshit","avatar":"lakshit_h.jpeg","dob":{"date":{"display":"23 Jun","month":6,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Lakshit Harkut"}],"anniversary":{"date":{"display":"09 Dec","month":12,"day":9},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-krida","relation":"Daughter","displayName":"Krida Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Krida","avatar":"krida.jpeg","dob":{"date":{"display":"23 Dec","month":12,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Krida Harkut"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-amarchand-ramkanya","relation":"Son","displayName":"Ramkanya & Amarchand Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Ramkanya","avatar":"ramkanya.jpeg","dob":{"date":{"display":"16 Aug","month":8,"day":16},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Ramkanya Harkut"},{"name":"Amarchand","avatar":"amarchand.jpeg","dob":{"date":{"display":"06 Jul","month":7,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Amarchand Harkut"}],"anniversary":{"date":{"display":"19 Apr","month":4,"day":19},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sudarshan-prerna","relation":"Son","displayName":"Prerna & Sudarshan","isRoot":false,"defaultOpen":false,"people":[{"name":"Prerna","avatar":"prerna.jpeg","dob":{"date":{"display":"29 Jun","month":6,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Prerna Harkut"},{"name":"Sudarshan","avatar":"sudarshan.jpeg","dob":{"date":{"display":"08 Mar","month":3,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sudarshan Harkut"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[]},{"kind":"leaf","id":"branch-darshit","relation":"Son","displayName":"Darshit Harkut","isRoot":false,"defaultOpen":false,"people":[{"name":"Darshit","avatar":"darshit.jpeg","dob":{"date":{"display":"24 Oct","month":10,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Darshit Harkut"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-madhusudhan-shobha","relation":"Daughter","displayName":"Shobha & Madhududhan Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Shobha","avatar":"shobha.jpeg","dob":{"date":{"display":"26 Nov","month":11,"day":26},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shobha Laddha"},{"name":"Madhududhan","avatar":"madhusudhan.jpeg","dob":{"date":{"display":"24 Apr","month":4,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Madhududhan Laddha"}],"anniversary":{"date":{"display":"05 Mar","month":3,"day":5},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-prafful-manisha","relation":"Son","displayName":"Manisha & Prafful Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Manisha","avatar":"manisha_l.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Manisha Laddha"},{"name":"Prafful","avatar":"prafful.jpeg","dob":{"date":{"display":"30 May","month":5,"day":30},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Prafful Laddha"}],"anniversary":{"date":{"display":"29 Nov","month":11,"day":29},"isPlaceholder":false},"children":[]},{"kind":"couple","id":"branch-sanjeet-pallavi","relation":"Daughter","displayName":"Pallavi & Sanjeet Patwa","isRoot":false,"defaultOpen":false,"people":[{"name":"Pallavi","avatar":"pallavi.jpeg","dob":{"date":{"display":"10 May","month":5,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pallavi Patwa"},{"name":"Sanjeet","avatar":"sanjeet.jpeg","dob":{"date":{"display":"29 Jun","month":6,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sanjeet Patwa"}],"anniversary":{"date":{"display":"01 Nov","month":11,"day":1},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-mahesh-sangeeta","relation":"Daughter","displayName":"Sangeeta & Mahesh Soni","isRoot":false,"defaultOpen":false,"people":[{"name":"Sangeeta","avatar":null,"gender":"female","dob":{"date":{"display":"15 Aug","month":8,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"fullName":"Sangeeta Soni"},{"name":"Mahesh","avatar":null,"gender":"male","dob":{"date":{"display":"20 Feb","month":2,"day":20},"tithi":null,"isPlaceholder":false},"dod":null,"fullName":"Mahesh Soni"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-aman-megha","relation":"Daughter","displayName":"Megha & Aman Jain","isRoot":false,"defaultOpen":false,"people":[{"name":"Megha","avatar":null,"gender":"female","dob":{"date":{"display":"16 Feb","month":2,"day":16},"tithi":null,"isPlaceholder":false},"dod":null,"fullName":"Megha Jain"},{"name":"Aman","avatar":null,"gender":"male","dob":null,"dod":null,"fullName":"Aman Jain"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-tarun-shreya","relation":"Daughter","displayName":"Shreya & Tarun","isRoot":false,"defaultOpen":false,"people":[{"name":"Shreya","avatar":null,"gender":"female","dob":null,"dod":null,"fullName":"Shreya"},{"name":"Tarun","avatar":null,"gender":"male","dob":null,"dod":null,"fullName":"Tarun"}],"anniversary":null,"children":[]}]}]}]},{"kind":"couple","id":"branch-saraswati-mohanlal","relation":"Daughter","displayName":"Saraswati & Mohanlal Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Saraswati","avatar":"saraswati.jpeg","dob":{"date":{"display":"19 Aug","month":8,"day":19,"year":1941},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Saraswati Mundada"},{"name":"Mohanlal Mundada","avatar":"mohanlal_mundada.jpeg","dob":null,"dod":{"date":{"display":"23 Dec","month":12,"day":23},"tithi":{"name":"Navami","rank":9},"isPlaceholder":false},"gender":"male","fullName":"Mohanlal Mundada"}],"anniversary":{"date":{"display":"21 Feb","month":2,"day":21,"year":1958},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-shrikant-ujjwala","relation":"Son","displayName":"Ujjwala & Shrikant Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Ujjwala","avatar":"ujjwala.jpeg","dob":{"date":{"display":"02 Nov","month":11,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Ujjwala Mundada"},{"name":"Shrikant","avatar":"shrikant.jpeg","dob":{"date":{"display":"07 May","month":5,"day":7,"year":1970},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Shrikant Mundada"}],"anniversary":{"date":{"display":"27 Apr","month":4,"day":27},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-pratik-trupti","relation":"Son","displayName":"Trupti & Pratik","isRoot":false,"defaultOpen":false,"people":[{"name":"Trupti","avatar":"trupti_p.jpeg","dob":{"date":{"display":"01 Dec","month":12,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Trupti Mundada"},{"name":"Pratik","avatar":"pratik.jpeg","dob":{"date":{"display":"03 Dec","month":12,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Pratik Mundada"}],"anniversary":{"date":{"display":"26 Jun","month":6,"day":26},"isPlaceholder":false},"children":[]},{"kind":"leaf","id":"branch-pratiksha","relation":"Daughter","displayName":"Pratiksha Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Pratiksha","avatar":"pratiksha.jpeg","dob":{"date":{"display":"24 Mar","month":3,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pratiksha Mundada"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-prakash-savita","relation":"Son","displayName":"Savita & Prakash Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Savita","avatar":"savita.jpeg","dob":{"date":{"display":"24 Jul","month":7,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Savita Mundada"},{"name":"Prakash","avatar":"prakash.jpeg","dob":{"date":{"display":"06 Oct","month":10,"day":6,"year":1972},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Prakash Mundada"}],"anniversary":{"date":{"display":"26 Jan","month":1,"day":26},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-yogesh-divya","relation":"Daughter","displayName":"Divya & Yogesh Bhattad","isRoot":false,"defaultOpen":false,"people":[{"name":"Divya","avatar":"divya.jpeg","dob":{"date":{"display":"31 May","month":5,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Divya Bhattad"},{"name":"Yogesh","avatar":"yogesh.jpeg","dob":{"date":{"display":"09 Mar","month":3,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Yogesh Bhattad"}],"anniversary":{"date":{"display":"29 Jun","month":6,"day":29},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-kashvi","relation":"Daughter","displayName":"Kashvi Bhattad","isRoot":false,"defaultOpen":false,"people":[{"name":"Kashvi","avatar":"kashvi.jpeg","dob":{"date":{"display":"15 Oct","month":10,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Kashvi Bhattad"}],"anniversary":null,"children":[]}]},{"kind":"leaf","id":"branch-shreya","relation":"Daughter","displayName":"Shreya Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Shreya","avatar":"shreya.jpeg","dob":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shreya Mundada"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-bankatlal-lata","relation":"Son","displayName":"Lata & Bankatlal Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Lata","avatar":"lata.jpeg","dob":{"date":{"display":"31 Oct","month":10,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Lata Mundada"},{"name":"Bankatlal","avatar":"bankatlal.jpeg","dob":{"date":{"display":"07 Jul","month":7,"day":7,"year":1975},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Bankatlal Mundada"}],"anniversary":{"date":{"display":"11 Dec","month":12,"day":11},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-bhavik-piyusha","relation":"Daughter","displayName":"Piyusha & Bhavik","isRoot":false,"defaultOpen":false,"people":[{"name":"Piyusha","avatar":"piyusha.jpeg","dob":{"date":{"display":"27 Sep","month":9,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Piyusha"},{"name":"Bhavik","avatar":"bhavik.jpeg","dob":{"date":{"display":"12 Oct","month":10,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Bhavik"}],"anniversary":{"date":{"display":"20 Jul","month":7,"day":20},"isPlaceholder":false},"children":[]},{"kind":"leaf","id":"branch-isha","relation":"Daughter","displayName":"Isha Mundada","isRoot":false,"defaultOpen":false,"people":[{"name":"Isha","avatar":"eesha.jpeg","dob":{"date":{"display":"25 Mar","month":3,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Isha Mundada"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-rameshwar-manta","relation":"Daughter","displayName":"Manta & Rameshwar Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Manta","avatar":"manta.jpeg","dob":{"date":{"display":"15 Nov","month":11,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Manta Sarda"},{"name":"Rameshwar","avatar":"rameshwar.jpeg","dob":null,"dod":{"date":{"display":"13 Oct","month":10,"day":13},"tithi":{"name":"Chaturdashi","rank":14},"isPlaceholder":false},"gender":"male","fullName":"Rameshwar Sarda"}],"anniversary":{"date":{"display":"14 Feb","month":2,"day":14},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sachin-mamta","relation":"Son","displayName":"Mamta & Sachin Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Mamta","avatar":"mamta.jpeg","dob":{"date":{"display":"03 May","month":5,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Mamta Sarda"},{"name":"Sachin","avatar":"sachin_sarda.jpeg","dob":{"date":{"display":"24 Oct","month":10,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sachin Sarda"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[{"kind":"leaf","id":"branch-raashi","relation":"Daughter","displayName":"Raashi Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Raashi","avatar":"raashi.jpeg","dob":{"date":{"display":"15 Nov","month":11,"day":15},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Raashi Sarda"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-palak-s","relation":"Daughter","displayName":"Palak Sarda","isRoot":false,"defaultOpen":false,"people":[{"name":"Palak","avatar":"palak_s.jpeg","dob":{"date":{"display":"08 Jun","month":6,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Palak Sarda"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-kamlesh-sarika","relation":"Daughter","displayName":"Sarika & Kamlesh Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sarika","avatar":"sarika.jpeg","dob":{"date":{"display":"12 Mar","month":3,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sarika Jaju"},{"name":"Kamlesh","avatar":"kamlesh.jpeg","dob":{"date":{"display":"05 Feb","month":2,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kamlesh Jaju"}],"anniversary":{"date":{"display":"01 May","month":5,"day":1},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-nupur","relation":"Daughter","displayName":"Nupur Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Nupur","avatar":"nupur.jpeg","dob":{"date":{"display":"22 Aug","month":8,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Nupur Jaju"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-achal","relation":"Daughter","displayName":"Achal Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Achal","avatar":"achal.jpeg","dob":{"date":{"display":"14 Oct","month":10,"day":14},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Achal Jaju"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-pankaj-seema","relation":"Daughter","displayName":"Seema & Pankaj Toshniwal","isRoot":false,"defaultOpen":false,"people":[{"name":"Seema","avatar":"seema.jpeg","dob":{"date":{"display":"01 Jan","month":1,"day":1},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Seema Toshniwal"},{"name":"Pankaj","avatar":"pankaj_t.jpeg","dob":{"date":{"display":"27 Jan","month":1,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Pankaj Toshniwal"}],"anniversary":{"date":{"display":"19 Jun","month":6,"day":19},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-akshara-t","relation":"Daughter","displayName":"Akshara Toshniwal","isRoot":false,"defaultOpen":false,"people":[{"name":"Akshara","avatar":"akshara_t.jpeg","dob":{"date":{"display":"12 Aug","month":8,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Akshara Toshniwal"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-nidhi","relation":"Daughter","displayName":"Nidhi Toshniwal","isRoot":false,"defaultOpen":false,"people":[{"name":"Nidhi","avatar":"nidhi.jpeg","dob":{"date":{"display":"08 Oct","month":10,"day":8},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Nidhi Toshniwal"}],"anniversary":null,"children":[]}]}]}]},{"kind":"couple","id":"branch-dalichand-leela","relation":"Daughter","displayName":"Leela & Dalichand Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Leela","avatar":"leela_tapadia.jpeg","dob":null,"dod":{"date":{"display":"03 Jul","month":7,"day":3,"year":2020},"tithi":{"name":"Chaturdashi","rank":14},"isPlaceholder":false},"gender":"female","fullName":"Leela Tapadia"},{"name":"Dalichand","avatar":"dalichand.jpeg","dob":{"date":{"display":"03 Feb","month":2,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Dalichand Tapadia"}],"anniversary":{"date":{"display":"30 Nov","month":11,"day":30,"year":1964},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-kantilal-sujata","relation":"Son","displayName":"Sujata & Kantilal Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Sujata","avatar":"sujata.jpeg","dob":{"date":{"display":"09 Apr","month":4,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sujata Tapadia"},{"name":"Kantilal","avatar":"kantilal.jpeg","dob":{"date":{"display":"30 Mar","month":3,"day":30},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kantilal Tapadia"}],"anniversary":{"date":{"display":"30 Nov","month":11,"day":30},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-darshan-monika","relation":"Son","displayName":"Monika & Darshan","isRoot":false,"defaultOpen":false,"people":[{"name":"Monika","avatar":"monika.jpeg","dob":{"date":{"display":"06 Mar","month":3,"day":6},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Monika Tapadia"},{"name":"Darshan","avatar":"darshan.jpeg","dob":{"date":{"display":"11 Dec","month":12,"day":11},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Darshan Tapadia"}],"anniversary":{"date":{"display":"17 Mar","month":3,"day":17},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-riyansh","relation":"Son","displayName":"Riyansh Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Riyansh","avatar":"riyansh.jpeg","dob":{"date":{"display":"23 Oct","month":10,"day":23},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Riyansh Tapadia"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-riyanshi","relation":"Daughter","displayName":"Riyanshi Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Riyanshi","avatar":"riyanshi.jpeg","dob":{"date":{"display":"09 Mar","month":3,"day":9},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Riyanshi Tapadia"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-pankaj-prachi","relation":"Daughter","displayName":"Prachi & Pankaj Bihani","isRoot":false,"defaultOpen":false,"people":[{"name":"Prachi","avatar":"prachi.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Prachi Bihani"},{"name":"Pankaj","avatar":"pankaj.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Pankaj Bihani"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[{"kind":"leaf","id":"branch-nimish","relation":"Son","displayName":"Nimish Bihani","isRoot":false,"defaultOpen":false,"people":[{"name":"Nimish","avatar":"nimish.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Nimish Bihani"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-mahendra-sunita","relation":"Son","displayName":"Sunita & Mahendra Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Sunita","avatar":"sunita_t.jpeg","dob":{"date":{"display":"31 Jul","month":7,"day":31},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Sunita Tapadia"},{"name":"Mahendra","avatar":"mahendra.jpeg","dob":{"date":{"display":"05 Jul","month":7,"day":5},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Mahendra Tapadia"}],"anniversary":{"date":{"display":"10 Feb","month":2,"day":10},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-vijay-pradnya","relation":"Daughter","displayName":"Pradnya & Vijay Ovhal","isRoot":false,"defaultOpen":false,"people":[{"name":"Pradnya","avatar":"pradnya.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"female","fullName":"Pradnya Ovhal"},{"name":"Vijay","avatar":"vijay.jpeg","dob":{"date":null,"tithi":null,"isPlaceholder":true},"dod":null,"gender":"male","fullName":"Vijay Ovhal"}],"anniversary":{"date":null,"isPlaceholder":true},"children":[]}]}]},{"kind":"couple","id":"branch-hanumandas-rukmini","relation":"Daughter","displayName":"Rukmini & Hanumandas Tapadia","isRoot":false,"defaultOpen":false,"people":[{"name":"Rukmini","avatar":"rukmini.jpeg","dob":{"date":{"display":"29 Oct","month":10,"day":29,"year":1960},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Rukmini Tapadia"},{"name":"Hanumandas","avatar":"hanumandas.jpeg","dob":null,"dod":{"date":{"display":"27 Jan","month":1,"day":27},"tithi":{"name":"Ashtami","rank":8},"isPlaceholder":false},"gender":"male","fullName":"Hanumandas Tapadia"}],"anniversary":{"date":{"display":"06 Dec","month":12,"day":6},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-rajendra-shilpa","relation":"Daughter","displayName":"Shilpa & Rajendra Bhansali","isRoot":false,"defaultOpen":false,"people":[{"name":"Shilpa","avatar":"shilpa.jpeg","dob":{"date":{"display":"31 Dec","month":12,"day":31,"year":1977},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shilpa Bhansali"},{"name":"Rajendra","avatar":"rajendra_b.jpeg","dob":{"date":{"display":"24 Oct","month":10,"day":24},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rajendra Bhansali"}],"anniversary":{"date":{"display":"29 Apr","month":4,"day":29,"year":1998},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-rashi","relation":"Daughter","displayName":"Rashi Bhansali","isRoot":false,"defaultOpen":false,"people":[{"name":"Rashi","avatar":"rashi.jpeg","dob":{"date":{"display":"24 Feb","month":2,"day":24,"year":2000},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Rashi Bhansali"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-khushi","relation":"Daughter","displayName":"Khushi Bhansali","isRoot":false,"defaultOpen":false,"people":[{"name":"Khushi","avatar":"khushi.jpeg","dob":{"date":{"display":"25 Mar","month":3,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Khushi Bhansali"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-rajendra-trupti","relation":"Daughter","displayName":"Trupti & Rajendra Bajaj","isRoot":false,"defaultOpen":false,"people":[{"name":"Trupti","avatar":"trupti.jpeg","dob":{"date":{"display":"18 May","month":5,"day":18,"year":1981},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Trupti Bajaj"},{"name":"Rajendra","avatar":"rajendra_bajaj.jpeg","dob":{"date":{"display":"26 Jan","month":1,"day":26},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rajendra Bajaj"}],"anniversary":{"date":{"display":"29 Apr","month":4,"day":29,"year":1998},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-rushabh","relation":"Son","displayName":"Rushabh Bajaj","isRoot":false,"defaultOpen":false,"people":[{"name":"Rushabh","avatar":"rushabh.jpeg","dob":{"date":{"display":"28 Sep","month":9,"day":28},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Rushabh Bajaj"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-darshan-deepika","relation":"Daughter","displayName":"Deepika & Darshan Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Deepika","avatar":"deepika.jpeg","dob":{"date":{"display":"18 Feb","month":2,"day":18,"year":1999},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Deepika Laddha"},{"name":"Darshan","avatar":"darshan_l.jpeg","dob":{"date":{"display":"12 Apr","month":4,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Darshan Laddha"}],"anniversary":{"date":{"display":"31 Jan","month":1,"day":31},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-darshika","relation":"Daughter","displayName":"Darshika Laddha","isRoot":false,"defaultOpen":false,"people":[{"name":"Darshika","avatar":"darshika.jpeg","dob":{"date":{"display":"10 Aug","month":8,"day":10,"year":2025},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Darshika Laddha"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-umesh-rani","relation":"Daughter","displayName":"Rani & Umesh Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Rani","avatar":"rani.jpeg","dob":{"date":{"display":"29 Sep","month":9,"day":29},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Rani Rathi"},{"name":"Umesh","avatar":"umesh.jpeg","dob":{"date":{"display":"14 Mar","month":3,"day":14},"tithi":null,"isPlaceholder":false},"dod":{"date":{"display":"14 Mar","month":3,"day":14},"tithi":{"name":"Panchami","rank":5},"isPlaceholder":false},"gender":"male","fullName":"Umesh Rathi"}],"anniversary":{"date":{"display":"14 May","month":5,"day":14,"year":2007},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-shruti","relation":"Daughter","displayName":"Shruti Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Shruti","avatar":"shruti.jpeg","dob":{"date":{"display":"02 Mar","month":3,"day":2,"year":2008},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Shruti Rathi"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-umakant-pooja","relation":"Daughter","displayName":"Pooja & Umakant Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Pooja","avatar":"pooja_rathi.jpeg","dob":{"date":{"display":"29 Mar","month":3,"day":29,"year":1985},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Pooja Rathi"},{"name":"Umakant","avatar":"umakant.jpeg","dob":{"date":{"display":"10 Oct","month":10,"day":10},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Umakant Rathi"}],"anniversary":{"date":{"display":"07 May","month":5,"day":7,"year":2008},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-palak","relation":"Daughter","displayName":"Palak Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Palak","avatar":"palak.jpeg","dob":{"date":{"display":"03 Aug","month":8,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Palak Rathi"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-hiral","relation":"Daughter","displayName":"Hiral Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Hiral","avatar":"hiral.jpeg","dob":{"date":{"display":"13 Feb","month":2,"day":13,"year":2012},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Hiral Rathi"}],"anniversary":null,"children":[]}]}]},{"kind":"couple","id":"branch-madanlal-santosh","relation":"Daughter","displayName":"Santosh & Madanlal Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Santosh","avatar":"santosh.jpeg","dob":{"date":{"display":"25 Apr","month":4,"day":25},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Santosh Rathi"},{"name":"Madanlal Rathi","avatar":"madanlal_rathi.jpeg","dob":{"date":{"display":"27 Jul","month":7,"day":27},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Madanlal Rathi"}],"anniversary":{"date":{"display":"09 Feb","month":2,"day":9},"isPlaceholder":false},"children":[{"kind":"couple","id":"branch-sandesh-khushbu","relation":"Son","displayName":"Khushbu & Sandesh Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Khushbu","avatar":"khushbu.jpeg","dob":{"date":{"display":"26 Feb","month":2,"day":26},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Khushbu Rathi"},{"name":"Sandesh","avatar":"sandesh.jpeg","dob":{"date":{"display":"03 Jul","month":7,"day":3},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Sandesh Rathi"}],"anniversary":{"date":{"display":"12 Dec","month":12,"day":12},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-anvi","relation":"Daughter","displayName":"Anvi Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Anvi","avatar":"anvi.jpeg","dob":{"date":{"display":"19 Sep","month":9,"day":19},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Anvi Rathi"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-avira","relation":"Daughter","displayName":"Avira Rathi","isRoot":false,"defaultOpen":false,"people":[{"name":"Avira","avatar":"avira.jpeg","dob":{"date":{"display":"07 Jun","month":6,"day":7},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Avira Rathi"}],"anniversary":null,"children":[]}]},{"kind":"couple","id":"branch-kailash-chanchal","relation":"Daughter","displayName":"Chanchal & Kailash Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Chanchal","avatar":"chanchal.jpeg","dob":{"date":{"display":"18 Feb","month":2,"day":18},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Chanchal Kasat"},{"name":"Kailash","avatar":"kailash.jpeg","dob":{"date":{"display":"12 Feb","month":2,"day":12},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Kailash Kasat"}],"anniversary":{"date":{"display":"23 Jun","month":6,"day":23},"isPlaceholder":false},"children":[{"kind":"leaf","id":"branch-harsh","relation":"Son","displayName":"Harsh Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Harsh","avatar":"harsh.jpeg","dob":{"date":{"display":"22 Jan","month":1,"day":22},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"male","fullName":"Harsh Kasat"}],"anniversary":null,"children":[]},{"kind":"leaf","id":"branch-neha","relation":"Daughter","displayName":"Neha Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Neha","avatar":"neha.jpeg","dob":{"date":{"display":"02 Jun","month":6,"day":2},"tithi":null,"isPlaceholder":false},"dod":null,"gender":"female","fullName":"Neha Kasat"}],"anniversary":null,"children":[]}]}]}]},{"kind":"couple","id":"branch-srinivas-lakshmi-singhi","relation":"Son","displayName":"Lakshmi & Srinivas Singhi","isRoot":false,"defaultOpen":false,"people":[{"name":"Lakshmi","avatar":null,"dob":null,"dod":null,"gender":"female","fullName":"Lakshmi Singhi"},{"name":"Srinivas","avatar":null,"dob":null,"dod":null,"gender":"male","fullName":"Srinivas Singhi"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-hiralal-sitabai-jaju","relation":"Son","displayName":"Sitabai & Hiralal Jaju","isRoot":false,"defaultOpen":false,"people":[{"name":"Sitabai","avatar":null,"dob":null,"dod":{"date":null,"tithi":{"name":"Ashtami","rank":8},"isPlaceholder":false},"gender":"female","fullName":"Sitabai Jaju"},{"name":"Hiralal","avatar":null,"dob":null,"dod":{"date":null,"tithi":{"name":"Navami","rank":9},"isPlaceholder":false},"gender":"male","fullName":"Hiralal Jaju"}],"anniversary":null,"children":[]},{"kind":"single","id":"branch-ghisibai-kasat","relation":"Daughter","displayName":"Ghisibai Kasat","isRoot":false,"defaultOpen":false,"people":[{"name":"Ghisibai","avatar":null,"dob":null,"dod":{"date":null,"tithi":{"name":"Beej","rank":2},"isPlaceholder":false},"gender":"female","fullName":"Ghisibai Kasat"}],"anniversary":null,"children":[]},{"kind":"couple","id":"branch-rambabai-shankarlal-bhutada","relation":"Daughter","displayName":"Rambabai & Shankarlal Bhutada","isRoot":false,"defaultOpen":false,"people":[{"name":"Rambabai","avatar":null,"dob":null,"dod":{"date":null,"tithi":{"name":"Navami","rank":9},"isPlaceholder":false},"gender":"female","fullName":"Rambabai Bhutada"},{"name":"Shankarlal","avatar":null,"dob":null,"dod":null,"gender":"male","fullName":"Shankarlal Bhutada"}],"anniversary":null,"children":[]}]}]}]}];
 </script>
 <script>
 // =====================================================================
@@ -735,6 +912,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return dateObj.year ? `${dateObj.display} ${dateObj.year}` : dateObj.display;
     }
 
+    function computeAge(dob) {
+        if (!dob || !dob.year) return null;
+        const today = new Date();
+        let age = today.getFullYear() - dob.year;
+        const hadBirthdayThisYear = (today.getMonth() + 1 > dob.month) ||
+            (today.getMonth() + 1 === dob.month && today.getDate() >= dob.day);
+        if (!hadBirthdayThisYear) age--;
+        return age;
+    }
+
+    function dobDisplayWithAge(dob) {
+        const base = dateDisplayWithYear(dob);
+        const age = computeAge(dob);
+        return age !== null ? `${base} (${age})` : base;
+    }
+
     function formatBadges(node) {
         const badges = [];
         const isCouple = node.people.length > 1;
@@ -747,7 +940,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         node.people.forEach(p => {
             if (p.dob) {
-                const dateText = p.dob.isPlaceholder ? '[DOB]' : dateDisplayWithYear(p.dob.date);
+                const dateText = p.dob.isPlaceholder ? '[DOB]' : dobDisplayWithAge(p.dob.date);
                 const text = isCouple ? `${p.name}: ${dateText}` : dateText;
                 badges.push({ emoji: '🎂', text });
             }
@@ -866,23 +1059,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderAncestorsPanel() {
         const chain = computeAncestorChain();
-        const ancestorsBtn = document.getElementById('ancestors-btn');
+        if (!chain.length) { ancestorsRoot.innerHTML = ''; return; }
 
-        if (ancestorsRevealed <= 0 || chain.length === 0) {
-            ancestorsRoot.innerHTML = '';
-        } else {
-            const topIndex = Math.min(ancestorsRevealed, chain.length) - 1;
-            ancestorsRoot.innerHTML = `<ul>${renderNode(chain[topIndex], ANCHOR_ID, true, false)}</ul>`;
-        }
-
-        if (!chain.length) {
-            ancestorsBtn.style.display = 'none';
-        } else if (ancestorsRevealed >= chain.length) {
-            ancestorsBtn.textContent = '▼ Hide Earlier Generations';
+        let promptHtml = '';
+        if (ancestorsRevealed >= chain.length) {
+            promptHtml = `<div class="ancestor-toggle-prompt" id="ancestor-toggle-prompt">▼ Hide earlier generations</div>`;
         } else {
             const next = chain[ancestorsRevealed];
-            ancestorsBtn.textContent = `▲ View Ancestors (${next.displayName})`;
+            promptHtml = `<div class="ancestor-toggle-prompt" id="ancestor-toggle-prompt">▲ View ancestors (${escapeHtml(next.displayName)})</div>`;
         }
+
+        let revealedHtml = '';
+        if (ancestorsRevealed > 0) {
+            const topIndex = Math.min(ancestorsRevealed, chain.length) - 1;
+            revealedHtml = `<ul>${renderNode(chain[topIndex], ANCHOR_ID, true, false)}</ul>`;
+        }
+
+        ancestorsRoot.innerHTML = promptHtml + revealedHtml;
+
+        document.getElementById('ancestor-toggle-prompt').addEventListener('click', () => {
+            ancestorsRevealed = (ancestorsRevealed >= chain.length) ? 0 : ancestorsRevealed + 1;
+            renderAncestorsPanel();
+            if (ancestorsRevealed > 0) ancestorsRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
     }
 
     function renderTree() {
@@ -954,7 +1153,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 events.push({
                     type: 'anniversary', emoji: '💍', personName: coupleNames,
                     branchId: node.id || '', month: node.anniversary.date.month,
-                    day: node.anniversary.date.day, display: dateDisplayWithYear(node.anniversary.date)
+                    day: node.anniversary.date.day, anniversaryYear: node.anniversary.date.year || null,
+                    display: dateDisplayWithYear(node.anniversary.date)
                 });
             }
             node.people.forEach(p => {
@@ -962,7 +1162,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     events.push({
                         type: 'birthday', emoji: '🎂', personName: p.fullName || p.name,
                         branchId: node.id || '', month: p.dob.date.month,
-                        day: p.dob.date.day, display: dateDisplayWithYear(p.dob.date)
+                        day: p.dob.date.day, birthYear: p.dob.date.year || null,
+                        display: dateDisplayWithYear(p.dob.date)
                     });
                 }
                 if (p.dod) {
@@ -1005,21 +1206,92 @@ document.addEventListener("DOMContentLoaded", () => {
             : name;
     }
 
-    function waLinkFor(ev) {
-        let message = `Wishing you a very Happy ${ev.type === 'anniversary' ? 'Anniversary' : 'Birthday'}! 🌟`;
+    function hasPassedThisYear(month, day) {
+        const today = new Date();
+        const todayMonth = today.getMonth() + 1;
+        return (month < todayMonth) || (month === todayMonth && day < today.getDate());
+    }
+
+    function waMessageFor(ev, lang) {
+        const belated = ev.month && ev.day && hasPassedThisYear(ev.month, ev.day);
         if (ev.type === 'anniversary') {
-            message = `Wishing ${ev.personName} a very Happy Anniversary! 💍✨`;
+            return lang === 'hi'
+                ? (belated
+                    ? `शादी की सालगिरह की ढेर सारी शुभकामनाएं (देर से)! 🎊🎉🥳`
+                    : `शादी की सालगिरह की ढेर सारी शुभकामनाएं! 🎊🎉🥳`)
+                : (belated
+                    ? `Wishing ${ev.personName} a very Happy Belated Anniversary! 🎊🎉🥳`
+                    : `Wishing ${ev.personName} a very Happy Anniversary! 🎊🎉🥳`);
         }
-        return `https://wa.me/?text=${encodeURIComponent(message)}`;
+        return lang === 'hi'
+            ? (belated
+                ? `जन्मदिन की ढेर सारी शुभकामनाएं (देर से)! 🎊🎉🥳🎂`
+                : `जन्मदिन की ढेर सारी शुभकामनाएं! 🎊🎉🥳🎂`)
+            : (belated
+                ? `Wishing you a very Happy Belated Birthday, ${ev.personName}! 🎊🎉🥳🎂`
+                : `Wishing you a very Happy Birthday, ${ev.personName}! 🎊🎉🥳🎂`);
+    }
+
+    function waLinkFor(ev, lang) {
+        return `https://wa.me/?text=${encodeURIComponent(waMessageFor(ev, lang))}`;
     }
 
     function leanItemHtml(ev, withWaBtn) {
-        const wa = withWaBtn ? `<a href="${waLinkFor(ev)}" target="_blank" class="wa-btn-sm">Wish</a>` : '';
-        return `<div class="lean-item">` +
-            `<span class="li-left">${ev.emoji} ${nameHtmlFor(ev)}</span>` +
-            `<span class="li-right">${escapeHtml(ev.display)}${wa}</span>` +
+        const belated = withWaBtn && ev.month && ev.day && hasPassedThisYear(ev.month, ev.day);
+        const wishLabel = belated ? 'Belated' : 'Wish';
+        const wa = withWaBtn
+            ? `<a href="${waLinkFor(ev, 'en')}" target="_blank" class="wa-btn-sm${belated ? ' wa-btn-sm-belated' : ''}" data-wa-copy="${escapeHtml(waMessageFor(ev, 'en'))}">${wishLabel}</a>` +
+              `<a href="${waLinkFor(ev, 'hi')}" target="_blank" class="wa-btn-sm wa-btn-sm-hi" data-wa-copy="${escapeHtml(waMessageFor(ev, 'hi'))}">HI</a>`
+            : '';
+
+        let dateText = ev.display;
+        let badgeText = null;
+        let badgeClass = 'li-badge-tithi';
+
+        if (ev.type === 'birthday' && ev.birthYear) {
+            badgeText = `turning ${new Date().getFullYear() - ev.birthYear}`;
+            badgeClass = 'li-badge-age';
+        } else if (ev.type === 'anniversary' && ev.anniversaryYear) {
+            badgeText = `${ordinal(new Date().getFullYear() - ev.anniversaryYear)} Anniv`;
+            badgeClass = 'li-badge-age';
+        } else if (ev.type === 'tithi' && ev.display.includes(', ')) {
+            // Already grouped under a tithi-name header - show just the date here.
+            dateText = ev.display.split(', ')[0];
+        }
+
+        const badgeHtml = badgeText ? `<span class="li-badge ${badgeClass}">${escapeHtml(badgeText)}</span>` : '';
+
+        return `<div class="lean-item-v3">` +
+            `<span class="li-name">${ev.emoji} ${nameHtmlFor(ev)}</span>` +
+            `<span class="li-date">${escapeHtml(dateText)}</span>` +
+            `<span class="li-badge-slot">${badgeHtml}</span>` +
+            `<span class="li-actions">${wa}</span>` +
             `</div>`;
     }
+
+    // Copy the message to clipboard alongside opening the wa.me link, so if
+    // WhatsApp Web's link-based pre-fill mangles emoji (a known quirk with
+    // 4-byte Unicode characters), pasting (Ctrl+V) gives a clean result.
+    let waCopyToast = null;
+    function showWaCopyToast() {
+        if (!waCopyToast) {
+            waCopyToast = document.createElement('div');
+            waCopyToast.className = 'wa-copy-toast';
+            document.body.appendChild(waCopyToast);
+        }
+        waCopyToast.textContent = '📋 Message copied — if emoji look wrong, paste (Ctrl+V) over it';
+        waCopyToast.classList.add('show');
+        clearTimeout(waCopyToast._hideTimer);
+        waCopyToast._hideTimer = setTimeout(() => waCopyToast.classList.remove('show'), 3500);
+    }
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('[data-wa-copy]');
+        if (!el) return;
+        const text = el.dataset.waCopy;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showWaCopyToast).catch(() => {});
+        }
+    });
 
     function renderDashboard(selectedMonth) {
         document.getElementById('current-month-title').innerText = `Celebrations in ${selectedMonth}`;
@@ -1029,34 +1301,107 @@ document.addEventListener("DOMContentLoaded", () => {
         const celebrations = celebrationEvents.filter(e => e.month === monthIdx).sort((a, b) => a.day - b.day);
         const remembrances = remembranceEvents.filter(e => e.month === monthIdx).sort((a, b) => a.day - b.day);
 
-        eventsList.innerHTML = celebrations.length
-            ? celebrations.map(ev => leanItemHtml(ev, true)).join('')
-            : `<div class="no-events">No celebrations found for ${selectedMonth}.</div>`;
+        if (celebrations.length) {
+            renderDayGrid(celebrations, eventsList, true);
+        } else {
+            eventsList.innerHTML = `<div class="no-events">No celebrations found for ${selectedMonth}.</div>`;
+        }
 
         remembranceList.innerHTML = remembrances.length
             ? remembrances.map(ev => leanItemHtml(ev, false)).join('')
             : `<div class="no-events">No specific dates found for ${selectedMonth}.</div>`;
 
-        tithiList.innerHTML = tithiEvents.length
-            ? renderTithiClusters(tithiEvents)
-            : `<div class="no-events">No Tithi remembrances found.</div>`;
+        if (tithiEvents.length) {
+            renderTithiGrid(tithiEvents);
+        } else {
+            tithiList.innerHTML = `<div class="no-events">No Tithi remembrances found.</div>`;
+        }
     }
 
-    function renderTithiClusters(events) {
+    // Birthdays/anniversaries grouped by day-of-month - only days that
+    // actually have someone show up as a cell.
+    function renderDayGrid(events, containerEl, withWaBtn) {
+        const groups = [];
+        let current = null;
+        events.forEach(ev => {
+            if (!current || current.day !== ev.day) {
+                current = { day: ev.day, items: [] };
+                groups.push(current);
+            }
+            current.items.push(ev);
+        });
+
+        containerEl.innerHTML = `<div class="celeb-grid"></div><div class="celeb-detail" style="display:none;"></div>`;
+        const gridEl = containerEl.querySelector('.celeb-grid');
+        const detailEl = containerEl.querySelector('.celeb-detail');
+
+        groups.forEach((g) => {
+            const cell = document.createElement('div');
+            cell.className = 'celeb-cell';
+            const hasBirthday = g.items.some(e => e.type === 'birthday');
+            const hasAnniv = g.items.some(e => e.type === 'anniversary');
+            const icon = hasBirthday && hasAnniv ? '🎂💍' : hasBirthday ? '🎂' : '💍';
+            const monthAbbr = MONTHS[g.items[0].month - 1];
+            cell.innerHTML = `<span class="celeb-cell-icon">${icon}</span>` +
+                `<span class="celeb-cell-day">${String(g.day).padStart(2, '0')} ${monthAbbr}</span>` +
+                `<span class="celeb-cell-count">${g.items.length}</span>`;
+            cell.addEventListener('click', () => {
+                const alreadyActive = cell.classList.contains('active');
+                gridEl.querySelectorAll('.celeb-cell').forEach(c => c.classList.remove('active'));
+                if (alreadyActive) {
+                    detailEl.style.display = 'none';
+                    detailEl.innerHTML = '';
+                    return;
+                }
+                cell.classList.add('active');
+                detailEl.style.display = 'block';
+                detailEl.innerHTML = g.items.map(ev => leanItemHtml(ev, withWaBtn)).join('');
+            });
+            gridEl.appendChild(cell);
+        });
+    }
+
+    // Tithis with nobody on file simply never form a group here, since we
+    // build cells only from tithis actually present in the data. Purnima
+    // is excluded outright per family convention, even if it's ever added.
+    const EXCLUDED_TITHIS = new Set(['purnima']);
+
+    function renderTithiGrid(events) {
         const groups = [];
         let current = null;
         events.forEach(ev => {
             const label = ev.display.includes(',') ? ev.display.split(',').pop().trim() : ev.display;
+            if (EXCLUDED_TITHIS.has(label.toLowerCase())) return;
             if (!current || current.label !== label) {
                 current = { label, items: [] };
                 groups.push(current);
             }
             current.items.push(ev);
         });
-        return groups.map(g => `
-            <div class="tithi-group-label">${escapeHtml(g.label)}</div>
-            ${g.items.map(ev => leanItemHtml(ev, false)).join('')}
-        `).join('');
+
+        tithiList.innerHTML = `<div class="tithi-grid" id="tithi-grid"></div><div class="tithi-detail" id="tithi-detail" style="display:none;"></div>`;
+        const gridEl = document.getElementById('tithi-grid');
+        const detailEl = document.getElementById('tithi-detail');
+
+        groups.forEach((g) => {
+            const cell = document.createElement('div');
+            cell.className = 'tithi-cell';
+            cell.innerHTML = `${escapeHtml(g.label)}<span class="tithi-cell-count">${g.items.length}</span>`;
+            cell.addEventListener('click', () => {
+                const alreadyActive = cell.classList.contains('active');
+                gridEl.querySelectorAll('.tithi-cell').forEach(c => c.classList.remove('active'));
+                if (alreadyActive) {
+                    detailEl.style.display = 'none';
+                    detailEl.innerHTML = '';
+                    return;
+                }
+                cell.classList.add('active');
+                detailEl.style.display = 'block';
+                detailEl.innerHTML = `<div class="tithi-detail-title">${escapeHtml(g.label)}</div>` +
+                    g.items.map(ev => leanItemHtml(ev, false)).join('');
+            });
+            gridEl.appendChild(cell);
+        });
     }
 
     // ---------------------------------------------------------------
@@ -1081,7 +1426,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const itemHtml = (ev) => {
             const when = ev.daysAway === 0 ? 'Today' : ev.daysAway === 1 ? 'Tomorrow' : `in ${ev.daysAway}d`;
-            return `<div class="lean-item"><span class="li-left">${ev.emoji} ${nameHtmlFor(ev)}</span><span class="li-right">${when}</span></div>`;
+            let ageBadge = '';
+            const occurrenceYear = new Date(Date.now() + ev.daysAway * 86400000).getFullYear();
+            if (ev.type === 'birthday' && ev.birthYear) {
+                ageBadge = `<span class="li-badge li-badge-age">turning ${occurrenceYear - ev.birthYear}</span>`;
+            } else if (ev.type === 'anniversary' && ev.anniversaryYear) {
+                ageBadge = `<span class="li-badge li-badge-age">${ordinal(occurrenceYear - ev.anniversaryYear)} Anniv</span>`;
+            }
+            return `<div class="lean-item"><span class="li-left">${ev.emoji} ${nameHtmlFor(ev)}</span><span class="li-right">${when}${ageBadge}</span></div>`;
         };
 
         let html = '<div class="tithi-group-label">🎂 Birthdays</div>';
@@ -1180,25 +1532,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     searchInput.addEventListener('input', (e) => applySearch(e.target.value));
 
-    document.getElementById('expand-all-btn').addEventListener('click', () => {
-        treeRoot.querySelectorAll('details').forEach(d => { d.open = true; });
-        const chain = computeAncestorChain();
-        ancestorsRevealed = chain.length;
-        renderAncestorsPanel();
-        ancestorsRoot.querySelectorAll('details').forEach(d => { d.open = true; });
-    });
-    document.getElementById('collapse-all-btn').addEventListener('click', () => {
-        treeRoot.querySelectorAll('details').forEach(d => { d.open = false; });
-        ancestorsRevealed = 0;
-        renderAncestorsPanel();
-    });
-    document.getElementById('ancestors-btn').addEventListener('click', () => {
-        const chain = computeAncestorChain();
-        ancestorsRevealed = (ancestorsRevealed >= chain.length) ? 0 : ancestorsRevealed + 1;
-        renderAncestorsPanel();
-        if (ancestorsRevealed > 0) {
-            ancestorsRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    let treeIsExpanded = false;
+    document.getElementById('expand-collapse-toggle-btn').addEventListener('click', (e) => {
+        treeIsExpanded = !treeIsExpanded;
+        if (treeIsExpanded) {
+            treeRoot.querySelectorAll('details').forEach(d => { d.open = true; });
+            const chain = computeAncestorChain();
+            ancestorsRevealed = chain.length;
+            renderAncestorsPanel();
+            ancestorsRoot.querySelectorAll('details').forEach(d => { d.open = true; });
+            e.target.textContent = '⊟ All';
+            e.target.title = 'Collapse all branches';
+        } else {
+            treeRoot.querySelectorAll('details').forEach(d => { d.open = false; });
+            ancestorsRevealed = 0;
+            renderAncestorsPanel();
+            e.target.textContent = '⊞ All';
+            e.target.title = 'Expand all branches';
         }
+    });
+
+    document.getElementById('toolbar-more-toggle').addEventListener('click', () => {
+        const panel = document.getElementById('toolbar-secondary');
+        const nowShown = panel.classList.toggle('show');
+        document.getElementById('toolbar-more-toggle').textContent = nowShown ? '⋯ Less' : '⋯ More';
     });
 
     // ---------------------------------------------------------------
@@ -1229,7 +1586,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let rows = '';
         if (person.dob && !person.dob.isPlaceholder) {
-            rows += `<div class="detail-row"><span class="d-label">Birthday</span><span>🎂 ${escapeHtml(dateDisplayWithYear(person.dob.date))}</span></div>`;
+            rows += `<div class="detail-row"><span class="d-label">Birthday</span><span>🎂 ${escapeHtml(dobDisplayWithAge(person.dob.date))}</span></div>`;
         }
         if (person.dod) {
             const dodText = person.dod.date && person.dod.tithi
@@ -1554,6 +1911,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // SETUP notes for how SUGGESTION_ENDPOINT gets configured.
     // ---------------------------------------------------------------
     const SUGGESTION_ENDPOINT = 'https://jaju-tree-suggestions.kapil-jaju.workers.dev/';
+    const SITE_URL = 'https://kapkhush1219.github.io/jaju-tree/';
     const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
     const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic'];
 
@@ -1830,6 +2188,204 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------------
+    // Changelog
+    // ---------------------------------------------------------------
+    const SITE_CHANGELOG = [
+        { date: '10 Aug 2026', summary: 'Added "Suggest an Update" — family members can submit corrections and photos for review, no account needed.' },
+        { date: '10 Aug 2026', summary: 'Fixed 19 couples where gender/name order had gotten swapped; corrected several dates from the family tracking sheet.' },
+        { date: '9 Aug 2026', summary: 'Relationship finder now uses Hindi terms (Dadaji, Mamaji, Bhatija, etc.) alongside English, with maternal/paternal noted.' },
+        { date: '8 Aug 2026', summary: 'Rebuilt the tree to start at Badrinarayan ji, with earlier generations revealed one at a time via "View Ancestors."' },
+        { date: '8 Aug 2026', summary: 'Switched every couple to a consistent wife-first display order throughout the tree.' },
+        { date: '8 Aug 2026', summary: 'Added search, stats, a person detail view, and the "+ Add Family Member" form.' },
+        { date: '8 Aug 2026', summary: 'Rebuilt the site to run off a single data file instead of hand-typed HTML, fixing several fragile spots in the original.' },
+    ];
+
+    function renderChangelog() {
+        document.getElementById('changelog-list').innerHTML = SITE_CHANGELOG.map(entry => `
+            <div class="changelog-entry">
+                <div class="changelog-date">${escapeHtml(entry.date)}</div>
+                <div class="changelog-summary">${escapeHtml(entry.summary)}</div>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('changelog-btn').addEventListener('click', () => {
+        renderChangelog();
+        openModal('changelog-modal');
+    });
+
+    // ---------------------------------------------------------------
+    // PDF / Print
+    // ---------------------------------------------------------------
+    const pdfRootSelect = document.getElementById('pdf-root-select');
+
+    function populatePdfRootDropdown() {
+        const options = [{ id: '', label: '🌳 Entire Tree' }];
+        Object.keys(nodeIndex).forEach(id => {
+            const entry = nodeIndex[id];
+            if (entry.node.kind === 'leaf') return; // no descendants worth a standalone PDF
+            const indent = '— '.repeat(Math.max(0, entry.depth - 1));
+            const label = `${entry.node.relation ? entry.node.relation + ': ' : ''}${entry.node.displayName}`;
+            options.push({ id, label: indent + label, depth: entry.depth });
+        });
+        // keep "Entire Tree" first, then sort the rest by depth (matches tree order roughly)
+        const rest = options.slice(1).sort((a, b) => a.depth - b.depth);
+        pdfRootSelect.innerHTML = [options[0], ...rest]
+            .map(o => `<option value="${o.id}">${escapeHtml(o.label)}</option>`).join('');
+    }
+
+    document.getElementById('pdf-btn').addEventListener('click', () => {
+        const selectedId = pdfRootSelect.value;
+
+        if (!selectedId) {
+            // Entire tree: expand ancestors + everything, print, restore
+            const chain = computeAncestorChain();
+            const wasRevealed = ancestorsRevealed;
+            ancestorsRevealed = chain.length;
+            renderAncestorsPanel();
+            treeRoot.querySelectorAll('details').forEach(d => { d.open = true; });
+            ancestorsRoot.querySelectorAll('details').forEach(d => { d.open = true; });
+
+            window.print();
+
+            window.addEventListener('afterprint', function restoreAfterPrint() {
+                ancestorsRevealed = wasRevealed;
+                renderAncestorsPanel();
+                window.removeEventListener('afterprint', restoreAfterPrint);
+            });
+            return;
+        }
+
+        // A specific branch: temporarily replace the main tree with just that
+        // subtree, hide the ancestors panel, print, then restore normal view.
+        const selectedNode = findNodeById(FAMILY_DATA, selectedId);
+        if (!selectedNode) return;
+
+        const savedTreeHtml = treeRoot.innerHTML;
+        const savedAncestorsHtml = ancestorsRoot.innerHTML;
+        const savedAncestorsDisplay = ancestorsRoot.parentElement.style.display;
+
+        treeRoot.innerHTML = `<ul>${renderNode(selectedNode, null, true, true)}</ul>`;
+        treeRoot.querySelectorAll('details').forEach(d => { d.open = true; });
+        ancestorsRoot.innerHTML = '';
+        ancestorsRoot.parentElement.style.display = 'none';
+
+        window.print();
+
+        window.addEventListener('afterprint', function restorePartialPrint() {
+            treeRoot.innerHTML = savedTreeHtml;
+            ancestorsRoot.innerHTML = savedAncestorsHtml;
+            ancestorsRoot.parentElement.style.display = savedAncestorsDisplay;
+            window.removeEventListener('afterprint', restorePartialPrint);
+        });
+    });
+
+    // ---------------------------------------------------------------
+    // WhatsApp Digest
+    // ---------------------------------------------------------------
+    document.getElementById('digest-btn').addEventListener('click', () => {
+        const selectedMonth = monthSelector.value;
+        const monthIdx = MONTHS.indexOf(selectedMonth) + 1;
+        const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const celebrations = celebrationEvents.filter(e => e.month === monthIdx).sort((a, b) => a.day - b.day);
+
+        const bdays = celebrations.filter(e => e.type === 'birthday');
+        const annivs = celebrations.filter(e => e.type === 'anniversary');
+
+        let text = `🌳 *Jaju Family — ${monthNames[monthIdx - 1]}*\n\n`;
+        if (bdays.length) {
+            text += `🎂 *Birthdays*\n`;
+            bdays.forEach(e => { text += `${e.display.split(' ').slice(0, 2).join(' ')} — ${e.personName}\n`; });
+            text += `\n`;
+        }
+        if (annivs.length) {
+            text += `💍 *Anniversaries*\n`;
+            annivs.forEach(e => { text += `${e.display.split(' ').slice(0, 2).join(' ')} — ${e.personName}\n`; });
+            text += `\n`;
+        }
+        if (!bdays.length && !annivs.length) {
+            text += `Nothing this month.\n\n`;
+        }
+        text += `— from the Jaju Family Tree`;
+
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    });
+
+    // ---------------------------------------------------------------
+    // Health Check
+    // ---------------------------------------------------------------
+    // These ancestors predate any living memory in the tree - they'll never
+    // have a dod recorded, but they're obviously not people to "nudge."
+    const KNOWN_HISTORICAL_IDS = new Set(['branch-surajmalji-jaju', 'branch-raghunathji-jaju']);
+
+    function computeHealthIssues() {
+        const issues = [];
+        function walk(nodes) {
+            nodes.forEach(node => {
+                const historical = KNOWN_HISTORICAL_IDS.has(node.id);
+                node.people.forEach(p => {
+                    const name = p.fullName || p.name;
+                    const deceased = !!p.dod || historical;
+                    if (!p.avatar) issues.push({ name, issue: 'No photo on file', type: 'Photo', nudgeable: !deceased });
+                    if (!p.dob) issues.push({ name, issue: 'No birthday on file', type: 'Birthday', nudgeable: !deceased });
+                    else if (!p.dob.isPlaceholder && p.dob.date && !p.dob.date.year) {
+                        issues.push({ name, issue: 'Birthday has no year', type: 'Birthday', nudgeable: !deceased });
+                    }
+                });
+                if (node.children && node.children.length) walk(node.children);
+            });
+        }
+        walk(FAMILY_DATA);
+        // Nudgeable (living, actionable) issues first, then informational ones
+        issues.sort((a, b) => (b.nudgeable ? 1 : 0) - (a.nudgeable ? 1 : 0));
+        return issues;
+    }
+
+    function renderHealthCheck() {
+        const issues = computeHealthIssues();
+        const nudgeableCount = issues.filter(i => i.nudgeable).length;
+        const listEl = document.getElementById('health-check-list');
+        const summary = document.createElement('div');
+        summary.className = 'health-summary';
+        summary.textContent = `${issues.length} gap${issues.length === 1 ? '' : 's'} found — ${nudgeableCount} you could ask someone about directly.`;
+
+        if (!issues.length) {
+            listEl.innerHTML = '';
+            listEl.appendChild(summary);
+            listEl.innerHTML += `<div class="no-events">Everything's filled in — nice.</div>`;
+            return;
+        }
+
+        const HI_TYPE = { 'Photo': 'फोटो', 'Birthday': 'जन्मतिथि' };
+
+        const rows = issues.map(i => {
+            if (!i.nudgeable) {
+                return `<div class="health-row">
+                    <span>${escapeHtml(i.name)} — <span class="health-issue">${escapeHtml(i.issue)}</span></span>
+                </div>`;
+            }
+            const messageEn = `Hi ${i.name}! Our family tree is missing your ${i.type.toLowerCase()} — could you add it here: ${SITE_URL} \u2192 "\ud83d\udce2 Suggest an Update"? Thanks! \ud83d\ude4f`;
+            const messageHi = `नमस्ते! हमारे फैमिली ट्री में आपकी ${HI_TYPE[i.type] || i.type} की जानकारी नहीं है — कृपया यहाँ जोड़ें: ${SITE_URL} \u2192 "\ud83d\udce2 Suggest an Update"। धन्यवाद! \ud83d\ude4f`;
+            return `<div class="health-row">
+                <span>${escapeHtml(i.name)} — <span class="health-issue">${escapeHtml(i.issue)}</span></span>
+                <span style="display:flex; gap:6px;">
+                    <a class="health-nudge-btn" href="https://wa.me/?text=${encodeURIComponent(messageEn)}" target="_blank" data-wa-copy="${escapeHtml(messageEn)}">Nudge</a>
+                    <a class="health-nudge-btn health-nudge-btn-hi" href="https://wa.me/?text=${encodeURIComponent(messageHi)}" target="_blank" data-wa-copy="${escapeHtml(messageHi)}">HI</a>
+                </span>
+            </div>`;
+        }).join('');
+
+        listEl.innerHTML = '';
+        listEl.appendChild(summary);
+        listEl.innerHTML += rows;
+    }
+
+    document.getElementById('health-check-btn').addEventListener('click', () => {
+        renderHealthCheck();
+        openModal('health-check-modal');
+    });
+
+    // ---------------------------------------------------------------
     // Init
     // ---------------------------------------------------------------
     function refreshAll() {
@@ -1840,6 +2396,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderUpcoming();
         applySearch(searchInput.value);
         populateRelationSelects();
+        populatePdfRootDropdown();
     }
 
     monthSelector.addEventListener('change', (e) => renderDashboard(e.target.value));
