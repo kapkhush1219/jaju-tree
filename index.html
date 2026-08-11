@@ -246,27 +246,37 @@
             .tree-container, .dashboard-container, .celeb-column, .rememb-column { width: 100%; overflow: visible; }
         }
     
-        /* ===================== NEW: 60-40 layout with combined digest region ===================== */
-        .main-wrapper { align-items: stretch; }
-        .tree-container { width: 60%; }
-        .digest-region {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        /* ===================== NEW: tabbed layout - one section visible at a time,
+           same behavior on every screen size, so it doesn't vary by device ===================== */
+        body { height: auto; overflow: auto; }
+        .app-tabs {
+            display: flex; gap: 8px; max-width: 1400px; margin: 0 auto 16px; padding: 0 30px;
+            flex-wrap: wrap;
         }
+        .app-tab {
+            padding: 10px 18px; border-radius: 12px 12px 0 0; border: 1px solid var(--border-color);
+            border-bottom: none; background: #eef2f7; color: var(--text-muted); font-weight: 700;
+            font-size: 0.9em; cursor: pointer; font-family: inherit; transition: all 0.2s ease;
+        }
+        .app-tab:hover { background: #e2e8f0; }
+        .app-tab.active { background: var(--card-bg); color: var(--primary-color); box-shadow: 0 -2px 8px rgba(0,0,0,0.04); }
+
+        .app-tab-pane { display: none; }
+        .app-tab-pane.active { display: block; }
+
+        .main-wrapper { display: block; }
+        .tree-container { width: 100%; }
         .digest-controls-card {
             background: var(--card-bg);
             padding: 16px 20px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border: 1px solid rgba(255,255,255,0.5);
+            margin-bottom: 16px;
         }
         .digest-split-row {
             display: flex;
             gap: 16px;
-            flex: 1;
-            min-height: 0;
         }
         .celeb-column, .rememb-column {
             width: 50%;
@@ -422,13 +432,6 @@
         }
         .health-row:last-child { border-bottom: none; }
         .health-issue { color: var(--text-muted); font-size: 0.85em; }
-        .health-nudge-btn {
-            background: #25D366; color: white; text-decoration: none; padding: 5px 12px;
-            border-radius: 14px; font-size: 0.78em; font-weight: 600; white-space: nowrap;
-        }
-        .health-nudge-btn:hover { background: #128C7E; }
-        .health-nudge-btn-hi { background: #ea580c; padding: 5px 10px; }
-        .health-nudge-btn-hi:hover { background: #c2410c; }
         .health-summary { font-size: 0.85em; color: var(--text-muted); margin-bottom: 10px; }
 
         /* ===================== NEW: wa-copy toast ===================== */
@@ -442,11 +445,13 @@
 
         /* ===================== NEW: print / PDF ===================== */
         @media print {
-            .tree-toolbar, .search-result-count, #suggest-update-btn,
+            .tree-toolbar, .search-result-count, #suggest-update-btn, .app-tabs,
             .relation-finder, .modal-overlay, .column-controls, .ancestor-stub, .ancestor-toggle-prompt,
             .btn-primary, .btn-secondary, .wa-btn-sm, .sync-btn, .root-expand-toggle-btn { display: none !important; }
             .main-wrapper { display: block; }
-            .tree-container, .digest-region, .celeb-column, .rememb-column { width: 100% !important; box-shadow: none; break-inside: avoid; }
+            .app-tab-pane { display: block !important; }
+            #tab-upcoming, #tab-celebrations { display: none !important; }
+            .tree-container, .celeb-column, .rememb-column { width: 100% !important; box-shadow: none; break-inside: avoid; }
             .digest-split-row { display: block; }
             body { background: white; }
             details { break-inside: avoid; }
@@ -545,8 +550,7 @@
         .form-hint { font-size: 0.78em; color: var(--text-muted); margin-top: 4px; }
         .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
 
-        @media (max-width: 1200px) {
-            .tree-container, .digest-region { width: 100%; }
+        @media (max-width: 700px) {
             .digest-split-row { flex-direction: column; }
             .celeb-column, .rememb-column { width: 100%; }
         }
@@ -572,47 +576,61 @@
 </head>
 <body>
 
+<div class="app-tabs">
+    <button class="app-tab active" data-tab="tab-tree">🌳 Family Tree</button>
+    <button class="app-tab" data-tab="tab-upcoming">🔔 In 30 Days</button>
+    <button class="app-tab" data-tab="tab-celebrations">🎉 Celebrations &amp; Remembrance</button>
+</div>
+
 <div class="main-wrapper">
 
-    <!-- LEFT: 50% WIDTH — FAMILY TREE -->
-    <div class="tree-container">
-        <h1>The Jaju Family Tree</h1>
-        <div class="subtitle">Interactive Descendant Chart • Click any branch to explore</div>
+    <div class="app-tab-pane active" id="tab-tree">
+        <div class="tree-container">
+            <h1>The Jaju Family Tree</h1>
+            <div class="subtitle">Interactive Descendant Chart • Click any branch to explore</div>
 
-        <div class="tree-toolbar">
-            <input type="text" id="tree-search" class="search-input" placeholder="🔍 Search family members...">
-            <button id="suggest-update-btn" class="btn-primary">📢 Suggest an Update</button>
-            <button id="toolbar-more-toggle" class="btn-secondary toolbar-more-toggle-btn">⋯ More</button>
-        </div>
-        <div class="tree-toolbar toolbar-secondary" id="toolbar-secondary">
-            <select id="pdf-root-select" class="search-input" style="flex:1 1 220px;"></select>
-            <button id="pdf-btn" class="btn-secondary">📄 Download PDF</button>
-            <button id="changelog-btn" class="btn-secondary">🕘 What's New</button>
-            <button id="health-check-btn" class="btn-secondary">🩺 Health Check</button>
-        </div>
-        <div id="search-result-count" class="search-result-count" style="display:none;"></div>
-        <div id="stats-bar" class="stats-bar"></div>
-
-        <div class="relation-finder">
-            <div class="rf-row">
-                <select id="rf-person-a"></select>
-                <span class="rf-and">&amp;</span>
-                <select id="rf-person-b"></select>
-                <button id="rf-find-btn" class="btn-secondary">Find</button>
+            <div class="tree-toolbar">
+                <input type="text" id="tree-search" class="search-input" placeholder="🔍 Search family members...">
+                <button id="suggest-update-btn" class="btn-primary">📢 Suggest an Update</button>
+                <button id="toolbar-more-toggle" class="btn-secondary toolbar-more-toggle-btn">⋯ More</button>
             </div>
-            <div id="rf-result" class="rf-result"></div>
-        </div>
+            <div class="tree-toolbar toolbar-secondary" id="toolbar-secondary">
+                <select id="pdf-root-select" class="search-input" style="flex:1 1 220px;"></select>
+                <button id="pdf-btn" class="btn-secondary">📄 Download PDF</button>
+                <button id="changelog-btn" class="btn-secondary">🕘 What's New</button>
+                <button id="health-check-btn" class="btn-secondary">🩺 Health Check</button>
+            </div>
+            <div id="search-result-count" class="search-result-count" style="display:none;"></div>
+            <div id="stats-bar" class="stats-bar"></div>
 
-        <div class="ancestors-panel">
-            <div id="ancestors-root"></div>
-        </div>
+            <div class="relation-finder">
+                <div class="rf-row">
+                    <select id="rf-person-a"></select>
+                    <span class="rf-and">&amp;</span>
+                    <select id="rf-person-b"></select>
+                    <button id="rf-find-btn" class="btn-secondary">Find</button>
+                </div>
+                <div id="rf-result" class="rf-result"></div>
+            </div>
 
-        <div id="tree-root"></div>
+            <div class="ancestors-panel">
+                <div id="ancestors-root"></div>
+            </div>
+
+            <div id="tree-root"></div>
+        </div>
     </div>
 
-    <!-- RIGHT: 40% WIDTH — DASHBOARD (controls, upcoming, celebrations + remembrance) -->
-    <div class="digest-region">
+    <div class="app-tab-pane" id="tab-upcoming">
+        <div class="digest-controls-card">
+            <div id="upcoming-box" class="upcoming-box" style="margin-bottom:0;">
+                <h4>🔔 Upcoming in the next 30 days</h4>
+                <div id="upcoming-list"></div>
+            </div>
+        </div>
+    </div>
 
+    <div class="app-tab-pane" id="tab-celebrations">
         <div class="digest-controls-card">
             <div class="column-controls">
                 <select id="month-selector" class="month-dropdown">
@@ -634,13 +652,6 @@
             </div>
         </div>
 
-        <div class="digest-controls-card">
-            <div id="upcoming-box" class="upcoming-box" style="margin-bottom:0;">
-                <h4>🔔 Upcoming in the next 30 days</h4>
-                <div id="upcoming-list"></div>
-            </div>
-        </div>
-
         <div class="digest-split-row">
             <div class="celeb-column">
                 <h3 id="current-month-title">Celebrations</h3>
@@ -655,7 +666,6 @@
                 <div id="tithi-list"></div>
             </div>
         </div>
-
     </div>
 
 </div>
@@ -752,7 +762,7 @@
         <button class="modal-close" data-close-modal="health-check-modal">&times;</button>
         <h3>Health Check</h3>
         <div class="form-hint" style="margin-bottom:14px;">
-            Gaps in the family tree's data. Use "Nudge" to open WhatsApp with a pre-filled message — you pick who to send it to, no phone numbers are stored on the site. "Nudge" only appears for people without a death record on file, but please use your own judgment — it can't fully tell who's actually reachable.
+            Gaps in the family tree's data — missing photos, birthdays, or years. Purely informational: no action buttons here, just a quick way to see what's still incomplete.
         </div>
         <div id="health-check-list"></div>
     </div>
@@ -877,8 +887,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // Tree rendering
     // ---------------------------------------------------------------
     function renderNameLine(node) {
-        const prefix = node.relation ? `${node.relation}: ` : '';
-        return `${prefix}${escapeHtml(node.displayName)}`;
+        if (!node.relation) return escapeHtml(node.displayName);
+        if (node.people.length < 2) {
+            return `${escapeHtml(node.relation)}: ${escapeHtml(node.displayName)}`;
+        }
+        // Place the Son/Daughter label next to whichever name is actually
+        // the blood relative, not just at the start of the (now wife-first)
+        // couple string - avoids implying the label describes the spouse.
+        const parts = node.displayName.split(' & ');
+        if (parts.length !== 2) {
+            return `${escapeHtml(node.relation)}: ${escapeHtml(node.displayName)}`;
+        }
+        const bloodIdx = isBloodRelative(node, 0) ? 0 : 1;
+        return bloodIdx === 0
+            ? `${escapeHtml(node.relation)}: ${escapeHtml(parts[0])} & ${escapeHtml(parts[1])}`
+            : `${escapeHtml(parts[0])} & ${escapeHtml(node.relation)}: ${escapeHtml(parts[1])}`;
     }
 
     function renderAvatarGroup(node) {
@@ -1367,9 +1390,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------------------------------------------------------
+    // Tab switching - one section visible at a time, same everywhere
+    // ---------------------------------------------------------------
+    function switchToTab(tabId) {
+        document.querySelectorAll('.app-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+        document.querySelectorAll('.app-tab-pane').forEach(p => p.classList.toggle('active', p.id === tabId));
+    }
+    document.querySelectorAll('.app-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchToTab(tab.dataset.tab));
+    });
+
+    // ---------------------------------------------------------------
     // openBranch — jump to & expand a node from anywhere on the page
     // ---------------------------------------------------------------
     window.openBranch = function (branchId) {
+        switchToTab('tab-tree'); // every openBranch target lives in the tree/ancestors panel
         let el = document.getElementById(branchId);
         if (!el) {
             // might be in a not-yet-revealed ancestor generation (or a sibling
@@ -1518,9 +1553,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (node.anniversary && !node.anniversary.isPlaceholder) {
             rows += `<div class="detail-row"><span class="d-label">Anniversary</span><span>💍 ${escapeHtml(dateDisplayWithYear(node.anniversary.date))}</span></div>`;
-        }
-        if (node.relation) {
-            rows += `<div class="detail-row"><span class="d-label">Relation</span><span>${escapeHtml(node.relation)}</span></div>`;
         }
         if (!rows) rows = `<div class="detail-row"><span class="d-label">Details</span><span>No dates on file</span></div>`;
 
@@ -1797,7 +1829,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // SETUP notes for how SUGGESTION_ENDPOINT gets configured.
     // ---------------------------------------------------------------
     const SUGGESTION_ENDPOINT = 'https://jaju-tree-suggestions.kapil-jaju.workers.dev/';
-    const SITE_URL = 'https://kapkhush1219.github.io/jaju-tree/';
     const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
     const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic'];
 
@@ -2086,40 +2117,31 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------------
     // Health Check
     // ---------------------------------------------------------------
-    // These ancestors predate any living memory in the tree - they'll never
-    // have a dod recorded, but they're obviously not people to "nudge."
-    const KNOWN_HISTORICAL_IDS = new Set(['branch-surajmalji-jaju', 'branch-raghunathji-jaju']);
-
     function computeHealthIssues() {
         const issues = [];
         function walk(nodes) {
             nodes.forEach(node => {
-                const historical = KNOWN_HISTORICAL_IDS.has(node.id);
                 node.people.forEach(p => {
                     const name = p.fullName || p.name;
-                    const deceased = !!p.dod || historical;
-                    if (!p.avatar) issues.push({ name, issue: 'No photo on file', type: 'Photo', nudgeable: !deceased });
-                    if (!p.dob) issues.push({ name, issue: 'No birthday on file', type: 'Birthday', nudgeable: !deceased });
+                    if (!p.avatar) issues.push({ name, issue: 'No photo on file' });
+                    if (!p.dob) issues.push({ name, issue: 'No birthday on file' });
                     else if (!p.dob.isPlaceholder && p.dob.date && !p.dob.date.year) {
-                        issues.push({ name, issue: 'Birthday has no year', type: 'Birthday', nudgeable: !deceased });
+                        issues.push({ name, issue: 'Birthday has no year' });
                     }
                 });
                 if (node.children && node.children.length) walk(node.children);
             });
         }
         walk(FAMILY_DATA);
-        // Nudgeable (living, actionable) issues first, then informational ones
-        issues.sort((a, b) => (b.nudgeable ? 1 : 0) - (a.nudgeable ? 1 : 0));
         return issues;
     }
 
     function renderHealthCheck() {
         const issues = computeHealthIssues();
-        const nudgeableCount = issues.filter(i => i.nudgeable).length;
         const listEl = document.getElementById('health-check-list');
         const summary = document.createElement('div');
         summary.className = 'health-summary';
-        summary.textContent = `${issues.length} gap${issues.length === 1 ? '' : 's'} found — ${nudgeableCount} you could ask someone about directly.`;
+        summary.textContent = `${issues.length} gap${issues.length === 1 ? '' : 's'} found.`;
 
         if (!issues.length) {
             listEl.innerHTML = '';
@@ -2128,24 +2150,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const HI_TYPE = { 'Photo': 'फोटो', 'Birthday': 'जन्मतिथि' };
-
-        const rows = issues.map(i => {
-            if (!i.nudgeable) {
-                return `<div class="health-row">
-                    <span>${escapeHtml(i.name)} — <span class="health-issue">${escapeHtml(i.issue)}</span></span>
-                </div>`;
-            }
-            const messageEn = `Hi ${i.name}! Our family tree is missing your ${i.type.toLowerCase()} — could you add it here: ${SITE_URL} \u2192 "\ud83d\udce2 Suggest an Update"? Thanks! \ud83d\ude4f`;
-            const messageHi = `नमस्ते! हमारे फैमिली ट्री में आपकी ${HI_TYPE[i.type] || i.type} की जानकारी नहीं है — कृपया यहाँ जोड़ें: ${SITE_URL} \u2192 "\ud83d\udce2 Suggest an Update"। धन्यवाद! \ud83d\ude4f`;
-            return `<div class="health-row">
-                <span>${escapeHtml(i.name)} — <span class="health-issue">${escapeHtml(i.issue)}</span></span>
-                <span style="display:flex; gap:6px;">
-                    <a class="health-nudge-btn" href="https://wa.me/?text=${encodeURIComponent(messageEn)}" target="_blank" data-wa-copy="${escapeHtml(messageEn)}">Nudge</a>
-                    <a class="health-nudge-btn health-nudge-btn-hi" href="https://wa.me/?text=${encodeURIComponent(messageHi)}" target="_blank" data-wa-copy="${escapeHtml(messageHi)}">HI</a>
-                </span>
-            </div>`;
-        }).join('');
+        const rows = issues.map(i => `<div class="health-row">
+            <span>${escapeHtml(i.name)} — <span class="health-issue">${escapeHtml(i.issue)}</span></span>
+        </div>`).join('');
 
         listEl.innerHTML = '';
         listEl.appendChild(summary);
