@@ -925,6 +925,19 @@ document.addEventListener("DOMContentLoaded", () => {
             : `${escapeHtml(parts[0])} & ${badge} ${escapeHtml(parts[1])}`;
     }
 
+    // Same positioning logic as renderNameLine, but plain text (no HTML
+    // badge) - for contexts like <option> elements that can't render markup.
+    function relationLabelText(node) {
+        if (!node.relation) return node.displayName;
+        if (node.people.length < 2) return `${node.relation}: ${node.displayName}`;
+        const parts = node.displayName.split(' & ');
+        if (parts.length !== 2) return `${node.relation}: ${node.displayName}`;
+        const bloodIdx = isBloodRelative(node, 0) ? 0 : 1;
+        return bloodIdx === 0
+            ? `${node.relation}: ${parts[0]} & ${parts[1]}`
+            : `${parts[0]} & ${node.relation}: ${parts[1]}`;
+    }
+
     function renderAvatarGroup(node) {
         return `<div class="avatar-group">${node.people.map((p, i) => avatarImgTag(p, 'avatar', node.id, i)).join('')}</div>`;
     }
@@ -1068,13 +1081,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 nodeIndex[node.id] = { node, parentId, parentLabel, depth };
             }
             if (node.children && node.children.length) {
-                const label = `${node.relation ? node.relation + ': ' : ''}${node.displayName}`;
-                buildIndex(node.children, node.id, label, depth + 1);
+                buildIndex(node.children, node.id, relationLabelText(node), depth + 1);
             }
         });
     }
 
     let allPeopleFlat = [];
+
+    // "(Son of X)" / "(Daughter of X)" for a blood relative, or
+    // "(Wife of X)" / "(Husband of X)" for a spouse who married in -
+    // consistent and specific, instead of showing the whole unit's name.
+    function relationParenLabel(nodeId, personIdx) {
+        const entry = nodeIndex[nodeId];
+        const node = entry.node;
+        const person = node.people[personIdx];
+
+        if (node.people.length > 1 && !isBloodRelative(node, personIdx)) {
+            const partner = bloodPersonOf(node);
+            return `${person.gender === 'male' ? 'Husband' : 'Wife'} of ${partner.fullName || partner.name}`;
+        }
+
+        const parentEntry = entry.parentId ? nodeIndex[entry.parentId] : null;
+        if (!parentEntry) return ''; // topmost ancestor - no parent to reference
+        const parentBlood = bloodPersonOf(parentEntry.node);
+        const relWord = node.relation === 'Daughter' ? 'Daughter' : (node.relation === 'Son' ? 'Son' : (person.gender === 'male' ? 'Son' : 'Daughter'));
+        return `${relWord} of ${parentBlood.fullName || parentBlood.name}`;
+    }
 
     function rebuildIndex() {
         nodeIndex = {};
@@ -1088,11 +1120,12 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(nodeIndex).forEach(id => {
             const entry = nodeIndex[id];
             entry.node.people.forEach((p, idx) => {
+                const paren = relationParenLabel(id, idx);
                 allPeopleFlat.push({
                     nodeId: id,
                     personIndex: idx,
                     name: p.name,
-                    label: `${p.fullName || p.name} (${entry.node.displayName})`
+                    label: paren ? `${p.fullName || p.name} (${paren})` : (p.fullName || p.name)
                 });
             });
         });
@@ -1746,9 +1779,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (side === 'paternal') return gender === 'male' ? 'Bhatija' : 'Bhatiji';
         return gender === 'male' ? 'Bhanja' : 'Bhanji';
     }
-    function meraCousinPrefix(bloodGender, side) {
-        if (side === 'paternal') return bloodGender === 'male' ? 'Chachera' : 'Fufera';
-        return bloodGender === 'male' ? 'Mamera' : 'Mausera';
+    function meraCousinPrefix(bloodGender, side, cousinGender) {
+        const fem = cousinGender === 'female';
+        if (side === 'paternal') return bloodGender === 'male' ? (fem ? 'Chacheri' : 'Chachera') : (fem ? 'Fuferi' : 'Fufera');
+        return bloodGender === 'male' ? (fem ? 'Mameri' : 'Mamera') : (fem ? 'Mauseri' : 'Mausera');
     }
     function sideFromChain(chain) {
         const parentUnit = nodeIndex[chain[1]];
@@ -1756,6 +1790,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (rel === 'Son' || rel === 'Son-in-law') return 'paternal';
         if (rel === 'Daughter' || rel === 'Daughter-in-law') return 'maternal';
         return null;
+    }
+    // Spouse of a sibling/cousin uses an entirely different word in Hindi -
+    // not "Bhai/Behen" with the wrong gender swapped in, but Jijaji/Bhabhi
+    // and their reverse terms. Cousins get the same terms as siblings here,
+    // since Hindi treats them the same way for in-law purposes.
+    function inLawSiblingTermHindi(bloodPartnerGender, otherGender) {
+        if (bloodPartnerGender === 'female') {
+            return { spouseTerm: 'Jijaji', otherTerm: otherGender === 'male' ? 'Saala' : 'Saaliji' };
+        }
+        return { spouseTerm: 'Bhabhi', otherTerm: otherGender === 'male' ? 'Devar/Jeth [birth order pending]' : 'Nanand' };
     }
 
     function computeHindiRelationship(idA, idxA, idB, idxB, nameA, nameB) {
@@ -1795,14 +1839,34 @@ document.addEventListener("DOMContentLoaded", () => {
         const m = Math.min(d1, d2), n = Math.max(d1, d2), gap = n - m;
 
         if (gap === 0) {
-            if (m === 1) return `${nameA}: ${genderA === 'male' ? 'Bhai' : 'Behan'} · ${nameB}: ${genderB === 'male' ? 'Bhai' : 'Behan'}`;
+            // If exactly one side married into the family (not a blood
+            // relative), the term is computed via their blood-relative
+            // spouse, not by treating them as if they were that blood
+            // relative themselves.
+            const aSpouse = nodeA.people.length > 1 && !isBloodRelative(nodeA, idxA);
+            const bSpouse = nodeB.people.length > 1 && !isBloodRelative(nodeB, idxB);
+
+            if (aSpouse && bSpouse) return null; // both married in - too indirect for one standard term
+            if (aSpouse || bSpouse) {
+                if (m !== 1 && m !== 2) return null; // no standard term past 1st cousins either way
+                const spouseIsA = aSpouse;
+                const spouseNode = spouseIsA ? nodeA : nodeB;
+                const spouseName = spouseIsA ? nameA : nameB;
+                const otherName = spouseIsA ? nameB : nameA;
+                const otherGender = spouseIsA ? genderB : genderA;
+                const bloodPartner = bloodPersonOf(spouseNode);
+                const terms = inLawSiblingTermHindi(bloodPartner.gender, otherGender);
+                return `${spouseName}: ${terms.spouseTerm} · ${otherName}: ${terms.otherTerm}`;
+            }
+
+            if (m === 1) return `${nameA}: ${genderA === 'male' ? 'Bhai' : 'Behen'} · ${nameB}: ${genderB === 'male' ? 'Bhai' : 'Behen'}`;
             if (m === 2) {
                 const bloodInBUnit = bloodPersonOf(nodeIndex[chainB[1]].node);
-                const meraForA = meraCousinPrefix(bloodInBUnit.gender, sideFromChain(chainA));
+                const meraForA = meraCousinPrefix(bloodInBUnit.gender, sideFromChain(chainA), genderB);
                 const bloodInAUnit = bloodPersonOf(nodeIndex[chainA[1]].node);
-                const meraForB = meraCousinPrefix(bloodInAUnit.gender, sideFromChain(chainB));
-                return `${nameA} calls ${nameB}: ${meraForA} ${genderB === 'male' ? 'Bhai' : 'Behan'} · `
-                     + `${nameB} calls ${nameA}: ${meraForB} ${genderA === 'male' ? 'Bhai' : 'Behan'}`;
+                const meraForB = meraCousinPrefix(bloodInAUnit.gender, sideFromChain(chainB), genderA);
+                return `${nameA} calls ${nameB}: ${meraForA} ${genderB === 'male' ? 'Bhai' : 'Behen'} · `
+                     + `${nameB} calls ${nameA}: ${meraForB} ${genderA === 'male' ? 'Bhai' : 'Behen'}`;
             }
             return null; // 2nd+ cousins: no single standard term
         }
@@ -2049,9 +2113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(nodeIndex).forEach(id => {
             const entry = nodeIndex[id];
             if (entry.node.kind === 'leaf') return; // no descendants worth a standalone PDF
-            const indent = '— '.repeat(Math.max(0, entry.depth - 1));
-            const label = `${entry.node.relation ? entry.node.relation + ': ' : ''}${entry.node.displayName}`;
-            options.push({ id, label: indent + label, depth: entry.depth });
+            options.push({ id, label: relationLabelText(entry.node), depth: entry.depth });
         });
         // keep "Entire Tree" first, then sort the rest by depth (matches tree order roughly)
         const rest = options.slice(1).sort((a, b) => a.depth - b.depth);
